@@ -26,7 +26,7 @@ tags:
 ### AlertManager 组件
 
 - 使用 2018年3月22日以后的 [TiDB-Ansible](https://github.com/pingcap/tidb-ansible/blob/master/deploy.yml) 可以自动部署 AlertManager 组件
-- 也可按照参考[通过 systemd 守护 syncer 进程启动](../Docs/180323-Systemd-Syncer.md) 方案手动部署 AlertManager 组件
+- 也可按照参考[通过 systemd 守护 syncer 进程启动](../Docs/180323-Systemd-Syncer) 方案手动部署 AlertManager 组件
   - AlertManager 下载地址[传送门](https://prometheus.io/download/)
 
 ---
@@ -267,4 +267,4 @@ receivers:
 ### AlertManager 运维
 
 - 自动化部署的 AlertManager，启动停止脚本位于 `{{deploy_dir}}/scripts` 目录中
-- 手动部署的，参考[通过 systemd 守护 syncer 进程启动](../Docs/180323-Systemd-Syncer.md)文档
+- 手动部署的，参考[通过 systemd 守护 syncer 进程启动](../Docs/180323-Systemd-Syncer)文档
