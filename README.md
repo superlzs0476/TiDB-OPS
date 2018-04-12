@@ -1,6 +1,6 @@
 # TiDB-ops
 
-## Link
+## Main
 
 ### Monitor
 

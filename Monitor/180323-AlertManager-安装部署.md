@@ -15,7 +15,7 @@ tags:
 
 ## TiDB 监控架构
 
-![monitor](https://raw.githubusercontent.com/pingcap/docs-cn/master/media/syncer-monitor-scheme.png)
+![monitor](../media/180323-syncer-monitor-scheme.png)
 
 - [Grafana](https://github.com/grafana/grafana) 监控、度量分析仪表板工具，从 Prometheus 获取数据
 - [Prometheus](https://github.com/prometheus/prometheus) 用于存放监控数据的时序数据库
