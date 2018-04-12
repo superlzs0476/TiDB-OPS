@@ -1,7 +1,7 @@
 ---
 title: TiDB 环境变量解读
 date: 2018-04-11 13:40:52
-updated: 2017-04-11 21:40:52
+updated: 2017-04-12 17:07:52
 categories:
   - TiDB
 tags:
@@ -9,10 +9,12 @@ tags:
 ---
 # TiDB 环境变量解读
 
-## 代码块
-
-- TiDB 已支持的所有环境变量 [sysvar.go](https://github.com/pingcap/tidb/blob/master/sessionctx/variable/sysvar.go)
-- TiDB 系统环境变量 [tidb_vars.go](https://github.com/pingcap/tidb/blob/master/sessionctx/variable/tidb_vars.go)
+- docs-cn
+  - [TiDB 系统变量](https://github.com/pingcap/docs-cn/blob/master/sql/variable.md)
+  - [TiDB 专用系统变量和语法](https://github.com/pingcap/docs-cn/blob/master/sql/tidb-specific.md)
+- 代码块
+  - TiDB 已支持的所有环境变量 [sysvar.go](https://github.com/pingcap/tidb/blob/master/sessionctx/variable/sysvar.go)
+  - TiDB 系统环境变量 [tidb_vars.go](https://github.com/pingcap/tidb/blob/master/sessionctx/variable/tidb_vars.go)
 
 ## TiDB system variable
 
