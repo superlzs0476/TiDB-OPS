@@ -5,6 +5,7 @@
 ### Monitor
 
 - [AlertManager 安装 & 部署](Monitor/180323-AlertManager-安装部署.md)
+- [使用 blackbox_exporter 监测主机与服务状态](Monitor/180401-blackbox_exporter.md)
 
 ### Docs
 
