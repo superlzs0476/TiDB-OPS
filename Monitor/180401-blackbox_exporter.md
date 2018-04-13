@@ -14,8 +14,8 @@ tags:
 
 ## blackbox_exporter Deploy
 
-- Binary Download
-  - [Release](https://github.com/prometheus/blackbox_exporter/releases)
+- Binary
+  - [Release Download](https://github.com/prometheus/blackbox_exporter/releases)
   - `./bin/blackbox_exporter --web.listen-address=:9115 --log.level=info --config.file=conf/blackbox.yml`
 
 - Docker
