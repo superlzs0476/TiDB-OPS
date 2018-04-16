@@ -13,6 +13,7 @@
 - [为 Syncer 选用守护进程工具](Docs/180323-Systemd-Syncer.md)
 - [TiDB 环境变量解读](Docs/180411-TiDB-vars.md)
 - [TiSpark 服务安装 部署 测试](Docs/180416-TiSpark-deploy.md)
+- [TiDB cluster 修改组件 IP 地址](Docs/180327-TiDB-IP.md)
 
 ### Test
 
