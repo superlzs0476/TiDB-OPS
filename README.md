@@ -27,3 +27,4 @@
 ### Other
 
 - [Tmux 快捷键 & 速查表](Other/tmux.md)
+- [Screen 速查表](Other/screen.md)
