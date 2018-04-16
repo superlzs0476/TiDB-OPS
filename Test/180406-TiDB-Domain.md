@@ -38,7 +38,7 @@ db.p.cc | PD | 127.0.0.1 | 172.16.10.64
 
 ### PD 启动参数调整
 
-```BASH
+```bash
 exec bin/pd-server \
     --name="pd1" \
     --client-urls="http://0.0.0.0:2379" \

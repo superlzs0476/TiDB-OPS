@@ -17,5 +17,13 @@
 
 ### Test
 
-- [TiDB AUTO_INCREMENT 功能测试](Test-case/180327-AutoIncrementTest.md)
-- [TiDB Cluster 使用域名部署测试](Test-case/180406-TiDB-Domain.md)
+- [TiDB AUTO_INCREMENT 功能测试](Test/180327-AutoIncrementTest.md)
+- [TiDB Cluster 使用域名部署测试](Test/180406-TiDB-Domain.md)
+
+### Case by Case
+
+- waiting
+
+### Other
+
+- [Tmux 快捷键 & 速查表](Other/tmux.md)
