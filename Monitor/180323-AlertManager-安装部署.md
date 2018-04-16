@@ -15,7 +15,7 @@ tags:
 
 ## TiDB 监控架构
 
-![monitor](../media/180323-syncer-monitor-scheme.png)
+![monitor](https://raw.githubusercontent.com/BigerCAP/tidb-ops/master/Media/180323-syncer-monitor-scheme.png)
 
 - [Grafana](https://github.com/grafana/grafana) 监控、度量分析仪表板工具，从 Prometheus 获取数据
 - [Prometheus](https://github.com/prometheus/prometheus) 用于存放监控数据的时序数据库
@@ -35,7 +35,7 @@ tags:
 
 - Prometheus 配置文件地址 `{{deploy_dir}}/conf/prometheus.yml`
 
-### AlertManager 相关参数
+### AlertManager config template
 
 - 在 Prometheus 配置文件更新以下代码块，修改完成后重启后生效
 
@@ -47,7 +47,7 @@ alerting:
       - '172.16.10.65:39093' # AlertManager 地址
 ```
 
-### Black-box 相关参数
+### Black_box config template
 
 - 以下功能用于监控 TiDB cluster 组件业务端口与监控组件业务端口存活状态
   - 修改 Prometheus 配置文件并更新添加以下代码块，修改完成后重启生效
@@ -108,13 +108,6 @@ alerting:
       - source_labels: []
         regex: .*
         target_label: __address__
-        replacement: 172.16.10.65:9115  # Blackbox exporter.
-    relabel_configs:
-      - source_labels: [__address__]
-        target_label: __param_target
-      - source_labels: [__param_target]
-        target_label: instance
-      - target_label: __address__
         replacement: 172.16.10.65:9115  # Blackbox exporter.
 ```
 

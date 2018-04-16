@@ -70,11 +70,11 @@ modules:
       preferred_ip_protocol: "ip4"
 ```
 
-## blackbox_exporter 使用场景
+## blackbox_exporter 场景
 
 - [blackbox_exporter](https://github.com/prometheus/blackbox_exporter) 是 Prometheus 官方提供的 exporter 之一，可以提供 http、dns、tcp、icmp 的监控数据采集。
 
-## blackbox_exporter 功能测试
+### blackbox_exporter 功能测试
 
 - HTTP 测试
   - 定义 Request Header 信息
@@ -177,7 +177,7 @@ modules:
       replacement: 172.16.10.65:9115  # Blackbox 地址
 ```
 
-## HTTP 测试
+### HTTP 测试
 
 - [http_test.go](https://github.com/prometheus/blackbox_exporter/blob/master/prober/http_test.go)
 - 相关代码块添加到 Prometheus 文件内
@@ -202,7 +202,7 @@ modules:
         replacement: 172.16.10.65:9115
 ```
 
-## 告警
+## 告警测试与应用
 
 - 通过 `http://172.16.10.65:9115/probe?target=prometheus.io&module=http_2xx&debug=true` 方式可观察监听过程
 
@@ -265,7 +265,7 @@ modules:
   - 成功 == 1
   - 失败 == 0
 
-## 展示
+## Grafana 展示
 
 - 部署 Grafana 服务
   - 下载 [Grafana](https://grafana.com/grafana/download)
