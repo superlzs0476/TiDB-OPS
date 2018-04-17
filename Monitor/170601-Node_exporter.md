@@ -84,44 +84,44 @@ usage: node_exporter [<flags>]
 
 Flags:
   -h, --help                    Show context-sensitive help (also try --help-long and --help-man).
-      --collector.diskstats.ignored-devices="^(ram|loop|fd|(h|s|v|xv)d[a-z]|nvme\\d+n\\d+p)\\d+$"  
+      --collector.diskstats.ignored-devices="^(ram|loop|fd|(h|s|v|xv)d[a-z]|nvme\\d+n\\d+p)\\d+$"
                                 Regexp of devices to ignore for diskstats.
-      --collector.filesystem.ignored-mount-points="^/(sys|proc|dev)($|/)"  
+      --collector.filesystem.ignored-mount-points="^/(sys|proc|dev)($|/)"
                                 Regexp of mount points to ignore for filesystem collector.
-      --collector.filesystem.ignored-fs-types="^(sys|proc|auto)fs$"  
+      --collector.filesystem.ignored-fs-types="^(sys|proc|auto)fs$"
                                 Regexp of filesystem types to ignore for filesystem collector.
-      --collector.megacli.command="megacli"  
+      --collector.megacli.command="megacli"
                                 Command to run megacli.
-      --collector.netdev.ignored-devices="^$"  
+      --collector.netdev.ignored-devices="^$"
                                 Regexp of net devices to ignore for netdev collector.
-      --collector.ntp.server="127.0.0.1"  
+      --collector.ntp.server="127.0.0.1"
                                 NTP server to use for ntp collector
-      --collector.ntp.protocol-version=4  
+      --collector.ntp.protocol-version=4
                                 NTP protocol version
-      --collector.ntp.server-is-local  
+      --collector.ntp.server-is-local
                                 Certify that collector.ntp.server address is the same local host as this collector.
       --collector.ntp.ip-ttl=1  IP TTL to use while sending NTP query
-      --collector.ntp.max-distance=3.46608s  
+      --collector.ntp.max-distance=3.46608s
                                 Max accumulated distance to the root
-      --collector.ntp.local-offset-tolerance=1ms  
+      --collector.ntp.local-offset-tolerance=1ms
                                 Offset between local clock and local ntpd time to tolerate
       --path.procfs="/proc"     procfs mountpoint.
       --path.sysfs="/sys"       sysfs mountpoint.
-      --collector.qdisc.fixtures=""  
+      --collector.qdisc.fixtures=""
                                 test fixtures to use for qdisc collector end-to-end testing
-      --collector.runit.servicedir="/etc/service"  
+      --collector.runit.servicedir="/etc/service"
                                 Path to runit service directory.
-      --collector.supervisord.url="http://localhost:9001/RPC2"  
+      --collector.supervisord.url="http://localhost:9001/RPC2"
                                 XML RPC endpoint.
-      --collector.systemd.unit-whitelist=".+"  
+      --collector.systemd.unit-whitelist=".+"
                                 Regexp of systemd units to whitelist. Units must both match whitelist and not match blacklist to be included.
-      --collector.systemd.unit-blacklist=".+\\.scope"  
+      --collector.systemd.unit-blacklist=".+\\.scope"
                                 Regexp of systemd units to blacklist. Units must both match whitelist and not match blacklist to be included.
-      --collector.systemd.private  
+      --collector.systemd.private
                                 Establish a private, direct connection to systemd without dbus.
-      --collector.textfile.directory=""  
+      --collector.textfile.directory=""
                                 Directory to read text files with metrics from.
-      --collector.wifi.fixtures=""  
+      --collector.wifi.fixtures=""
                                 test fixtures to use for wifi collector metrics
       --collector.arp           Enable the arp collector (default: enabled).
       --collector.bcache        Enable the bcache collector (default: enabled).
@@ -167,12 +167,68 @@ Flags:
       --collector.xfs           Enable the xfs collector (default: enabled).
       --collector.zfs           Enable the zfs collector (default: enabled).
       --collector.timex         Enable the timex collector (default: enabled).
-      --web.listen-address=":9100"  
+      --web.listen-address=":9100"
                                 Address on which to expose metrics and web interface.
-      --web.telemetry-path="/metrics"  
+      --web.telemetry-path="/metrics"
                                 Path under which to expose metrics.
       --log.level="info"        Only log messages with the given severity or above. Valid levels: [debug, info, warn, error, fatal]
-      --log.format="logger:stderr"  
+      --log.format="logger:stderr"
                                 Set the log target and format. Example: "logger:syslog?appname=bob&local=7" or "logger:stdout?json=true"
       --version                 Show application version.
+```
+
+### 关闭指定 collector 模块
+
+- 使用 [prometheus.NewRegistry](https://github.com/prometheus/node_exporter/blob/master/node_exporter.go#L46) 判断并注册相关模块
+
+```bash
+./node_exporter --no-collector.arp --no-collector.bcache --no-collector.conntrack --no-collector.cpu --no-collector.diskstats --no-collector.edac --no-collector.entropy --no-collector.filefd --no-collector.filesystem  --no-collector.hwmon  --no-collector.infiniband  --no-collector.ipvs  --no-collector.loadavg --no-collector.mdadm  --no-collector.meminfo --no-collector.netdev --no-collector.netstat  --no-collector.sockstat  --no-collector.stat  --no-collector.textfile  --no-collector.time  --no-collector.timex  --no-collector.uname  --no-collector.vmstat  --no-collector.wifi  --no-collector.xfs  --no-collector.zfs
+```
+
+- 关闭相关模块启动
+
+```bash
+[root@jeff bin]$ ./node_exporter --no-collector.arp --no-collector.bcache --no-collector.conntrack --no-collector.cpu --no-collector.diskstats --no-collector.edac --no-collector.entropy --no-collector.filefd --no-collector.filesystem  --no-collector.hwmon  --no-collector.infiniband  --no-collector.ipvs  --no-collector.loadavg --no-collector.mdadm  --no-collector.meminfo --no-collector.netdev --no-collector.netstat  --no-collector.sockstat  --no-collector.stat  --no-collector.textfile  --no-collector.time  --no-collector.timex  --no-collector.uname  --no-collector.vmstat  --no-collector.wifi  --no-collector.xfs  --no-collector.zfs
+INFO[0000] Starting node_exporter (version=0.15.2, branch=HEAD, revision=98bc64930d34878b84a0f87dfe6e1a6da61e532d)  source="node_exporter.go:43"
+INFO[0000] Build context (go=go1.9.2, user=root@d5c4792c921f, date=20171205-14:50:53)  source="node_exporter.go:44"
+INFO[0000] Enabled collectors:                           source="node_exporter.go:50"
+INFO[0000] Listening on :9100                            source="node_exporter.go:76"
+```
+
+- 默认启动
+
+```bash
+[root@jeff bin]$ ./node_exporter
+INFO[0000] Starting node_exporter (version=0.15.2, branch=HEAD, revision=98bc64930d34878b84a0f87dfe6e1a6da61e532d)  source="node_exporter.go:43"
+INFO[0000] Build context (go=go1.9.2, user=root@d5c4792c921f, date=20171205-14:50:53)  source="node_exporter.go:44"
+INFO[0000] No directory specified, see --collector.textfile.directory  source="textfile.go:57"
+INFO[0000] Enabled collectors:                           source="node_exporter.go:50"
+INFO[0000]  - hwmon                                      source="node_exporter.go:52"
+INFO[0000]  - diskstats                                  source="node_exporter.go:52"
+INFO[0000]  - infiniband                                 source="node_exporter.go:52"
+INFO[0000]  - time                                       source="node_exporter.go:52"
+INFO[0000]  - mdadm                                      source="node_exporter.go:52"
+INFO[0000]  - netdev                                     source="node_exporter.go:52"
+INFO[0000]  - stat                                       source="node_exporter.go:52"
+INFO[0000]  - arp                                        source="node_exporter.go:52"
+INFO[0000]  - vmstat                                     source="node_exporter.go:52"
+INFO[0000]  - meminfo                                    source="node_exporter.go:52"
+INFO[0000]  - xfs                                        source="node_exporter.go:52"
+INFO[0000]  - conntrack                                  source="node_exporter.go:52"
+INFO[0000]  - bcache                                     source="node_exporter.go:52"
+INFO[0000]  - loadavg                                    source="node_exporter.go:52"
+INFO[0000]  - textfile                                   source="node_exporter.go:52"
+INFO[0000]  - sockstat                                   source="node_exporter.go:52"
+INFO[0000]  - wifi                                       source="node_exporter.go:52"
+INFO[0000]  - uname                                      source="node_exporter.go:52"
+INFO[0000]  - zfs                                        source="node_exporter.go:52"
+INFO[0000]  - ipvs                                       source="node_exporter.go:52"
+INFO[0000]  - entropy                                    source="node_exporter.go:52"
+INFO[0000]  - netstat                                    source="node_exporter.go:52"
+INFO[0000]  - filesystem                                 source="node_exporter.go:52"
+INFO[0000]  - filefd                                     source="node_exporter.go:52"
+INFO[0000]  - edac                                       source="node_exporter.go:52"
+INFO[0000]  - timex                                      source="node_exporter.go:52"
+INFO[0000]  - cpu                                        source="node_exporter.go:52"
+INFO[0000] Listening on :9100                            source="node_exporter.go:76"
 ```
