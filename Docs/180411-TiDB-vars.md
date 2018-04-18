@@ -1,7 +1,7 @@
 ---
 title: TiDB 环境变量解读
 date: 2018-04-11 13:40:52
-updated: 2017-04-12 17:07:52
+updated: 2018-04-12 17:07:52
 categories:
   - TiDB
 tags:

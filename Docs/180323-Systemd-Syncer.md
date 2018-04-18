@@ -1,12 +1,12 @@
 ---
 title: 为 Syncer 选用守护进程工具
 date: 2018-03-23 21:40:52
-updated: 2017-04-06 21:40:52
+updated: 2018-04-06 21:40:52
 categories: 
-  - deploy
+  - Deploy
 tags:
-  - syncer
-  - systemd
+  - Syncer
+  - Systemd
 ---
 # 为 Syncer 选用守护进程工具
 

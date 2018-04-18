@@ -1,12 +1,12 @@
 ---
 title: TiSpark 服务安装 部署 测试
 date: 2018-04-16 10:34:01
-updated: 2017-04-16 13:49:26
+updated: 2018-04-16 13:49:26
 categories:
   - TiSpark
 tags:
   - Deploy
-  - zeppelin
+  - Zeppelin
 ---
 # TiSpark 服务安装 部署 测试
 

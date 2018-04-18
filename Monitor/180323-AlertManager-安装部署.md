@@ -1,7 +1,7 @@
 ---
 title: AlertManager 安装 & 部署
 date: 2018-03-23 15:34:01
-updated: 2017-04-08 13:49:26
+updated: 2018-04-08 13:49:26
 categories:
   - Monitor
 tags:

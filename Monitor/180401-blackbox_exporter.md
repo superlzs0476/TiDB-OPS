@@ -1,7 +1,7 @@
 ---
-title: 使用 blackbox_exporter 监测主机与服务状态
+title: 使用 Blackbox_exporter 监测主机与服务状态
 date: 2018-04-01 15:34:01
-updated: 2017-04-13 13:49:26
+updated: 2018-04-13 13:49:26
 categories:
   - Monitor
 tags:
@@ -10,9 +10,9 @@ tags:
   - Proemtheus
   - Blackbox
 ---
-# 使用 blackbox_exporter 监测主机与服务状态
+# 使用 Blackbox_exporter 监测主机与服务状态
 
-## blackbox_exporter Deploy
+## Blackbox_exporter Deploy
 
 - Binary
   - [Release Download](https://github.com/prometheus/blackbox_exporter/releases)
@@ -74,7 +74,7 @@ modules:
 
 - [blackbox_exporter](https://github.com/prometheus/blackbox_exporter) 是 Prometheus 官方提供的 exporter 之一，可以提供 http、dns、tcp、icmp 的监控数据采集。
 
-### blackbox_exporter 功能测试
+### Blackbox_exporter 功能测试
 
 - HTTP 测试
   - 定义 Request Header 信息
