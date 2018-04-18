@@ -46,3 +46,5 @@
 ## About
 
 > These violent delights have violent ends [.](https://github.com/BigerCAP/tidb-ops "Westworld")
+
+![TiDB SQL at SCALE](https://raw.githubusercontent.com/BigerCAP/tidb-ops/master/Media/about-logo.png "A Distributed HTAP database compatible with the MySQL protocol")
