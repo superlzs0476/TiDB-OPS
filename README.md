@@ -17,7 +17,8 @@
 ### Monitor
 
 - [AlertManager 安装 & 部署](Monitor/180323-AlertManager-安装部署.md)
-- [AlertManager 进阶操作-告警定制](Monitor/180412-Alert.rules.md)
+- [告警如何炼成的](Monitor/171212-Alert-Mind.md)
+- [AlertManager 进阶操作-生产环境应用](Monitor/180412-Alert.rules.md)
 - [使用 Blackbox_exporter 监测主机与服务状态](Monitor/180401-blackbox_exporter.md)
 - [Node_exporter README](Monitor/170601-Node_exporter.md)
 

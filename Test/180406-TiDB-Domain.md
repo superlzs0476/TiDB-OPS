@@ -16,6 +16,7 @@ tags:
   - 使用 tidb-ansible 部署 binary 方式，启动使用 supervise
   - inventory.ini 文件中直接填写域名
   - 测试场景域名未经过 DNS 解析，直接使用 `/etc/hosts` 文件解析
+    - 线上场景可以使用内网 DNS 或者批量修改 `/etc/hosts` 方式对 `hostname | domain` 映射管理
 
 - 测试场景
   - 域名部署未影响实际功能，因此只测试个组件之间网络延迟与通讯是否正常
@@ -29,7 +30,7 @@ tags:
     - 参考 [invalid example: "http://example.com:2379" (domain name is invalid for binding)](https://coreos.com/etcd/docs/latest/v2/configuration.html)
     - 参考 [Configuration](https://coreos.com/etcd/docs/latest/faq.html)
   - TiKV 启动时，`--addr` 参数不能使用域名格式，只能使用 IP 或者 `0.0.0.0`
-      - `--advertise-addr "tikv.p.cc:20160"` 无需添加 `http://`
+    - `--advertise-addr "tikv.p.cc:20160"` 无需添加 `http://`
   - 测试 TiDB 域名与 IP 行为一致，无特殊影响
 
 ### 部署架构
