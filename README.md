@@ -11,6 +11,7 @@
 - [SQL 的一生](https://github.com/pingcap/blog-cn/blob/master/tidb-source-code-reading-3.md)
 - [Raft 的优化](https://github.com/pingcap/blog-cn/blob/master/optimizing-raft-in-tikv.md)
 - [PD Scheduler](https://github.com/pingcap/blog-cn/blob/master/pd-scheduler.md)
+- [TiDB 官方 FAQ](https://github.com/pingcap/docs-cn/blob/master/FAQ.md "TiDB 官方 FAQ")
 
 ## Main
 

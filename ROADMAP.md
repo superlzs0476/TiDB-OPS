@@ -26,6 +26,7 @@ tags:
 * [X] AlertManager 安装 & 部署
 * [X] AlertManager 进阶操作 - 生产环境应用
 * [X] Grafana & Prometheus 监控组件问题收集与排查思路
+  * [ ] 监控 metrics 解读
 
 ## Test
 
@@ -38,3 +39,18 @@ tags:
 * [X] Screen
 * [X] Tmux
 * [ ] NextCloud
+
+----
+
+## Plan
+
+### Air Plan (空中加油)
+
+* [ ] TiDB 安装部署调优
+* [ ] TiDB 数据库 SQL 业务优化
+* [ ] TiDB 业务场景问题处理
+  * [ ] TiDB 报错处理
+  * [ ] TiDB 数据库 Log 解读
+* [ ] TiDB 功能测试 analyze 、online DDL
+* [X] Grafana & Prometheus 监控组件问题收集与排查思路
+  * [ ] TiDB 监控 metrics 解读
