@@ -1,7 +1,7 @@
 ---
 title: TiDB 业务场景问题收集与排查思路
-date: 2017-06-01 21:40:52
-updated: 2017-06-06 21:40:52
+date: 2017-08-01 21:40:52
+updated: 2017-08-08 21:40:52
 categories:
   - TiDB
 tags:

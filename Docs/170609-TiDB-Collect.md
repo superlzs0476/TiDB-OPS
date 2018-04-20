@@ -1,7 +1,7 @@
 ---
 title: 运用工具收集 TiDB 运行问题
 date: 2017-06-01 21:40:52
-updated: 2017-06-06 21:40:52
+updated: 2017-06-09 21:40:52
 categories:
   - Tools
 tags:

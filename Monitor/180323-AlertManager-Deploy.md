@@ -259,5 +259,8 @@ receivers:
 
 ### AlertManager 运维
 
-- 自动化部署的 AlertManager，启动停止脚本位于 `{{deploy_dir}}/scripts` 目录中
-- 手动部署的，参考[通过 systemd 守护 syncer 进程启动](../Docs/180323-Systemd-Syncer)文档
+- 告警测试
+  - `curl -H "Content-Type: application/json" -d ‘[{"labels":{"alertname":"TestAlert1"}}]’ http://180.76.154.185:9093/api/v1/alerts`
+- 启动 停止管理
+  - 自动化部署的 AlertManager，启动停止脚本位于 `{{deploy_dir}}/scripts` 目录中
+  - 手动部署的，参考[通过 systemd 守护 syncer 进程启动](../Docs/180323-Systemd-Syncer)文档
