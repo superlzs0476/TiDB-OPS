@@ -63,6 +63,12 @@ tags:
 
 ### 火焰图
 
+> 每一个小块代表了一个函数在栈中的位置（即一个栈帧）  
+> Y 轴代表了栈的深度（栈上的帧数），顶端的小块显示了占据 CPU 的函数。每个小块下面是它的祖先（即父函数），就像我们经常提的 js 调用栈  
+> X 轴表示总的样例群体。它不像绝大多数图表那样从左到右表示时间的流逝，它们的左右顺序没有特殊含义（仅仅是按照字母表顺序排列）  
+> 小块的宽度表示 CPU 使用时间或者说相对父函数而言使用 CPU 的比率（基于所有样例），越宽代表占用 CPU 的时间越长，或者使用 CPU 很频繁  
+> 如果采取多线程并发运行取样，取样数量会超过运行时间  
+
 - 使用时可阅读下 [Debug 利器之火焰图](https://pingcap.com/blog-cn/flame-graph/) 文档
 
 - 下载并解压 https://github.com/brendangregg/FlameGraph/archive/master.zip
@@ -77,6 +83,11 @@ tags:
   ./FlameGraph/stackcollapse-perf.pl out.perf > out.folded
   ./FlameGraph/flamegraph.pl out.folded > kernel.svg
   ```
+
+### linuxperf
+
+- [linuxperf](http://www.brendangregg.com/linuxperf.html)
+- [bcc](https://github.com/iovisor/bcc) - Tools for BPF-based Linux IO analysis, networking, monitoring, and more
 
 ### 使用 pstack 查看 Binary 堆栈
 
