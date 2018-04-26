@@ -10,73 +10,15 @@ tags:
 ---
 # TiDB 业务场景问题收集与排查思路
 
-## 步骤
+## 运维场景
 
-- tidb 对于 range scan，大范围扫描的查询有优化么？
+### TiDB 忘记密码
 
-- 支持 binary 方式写入
+- TiDB 忘了密码怎么办
+  - TiDB [权限管理](https://github.com/pingcap/docs-cn/blob/master/sql/privilege.md)
 
-- 使用 goldengate 将数据从 oracle 复制到 tidb,
-  - ogg 执行登陆代码： dblogin sourcedb 时报错 ERROR OGG-00768 The Value '2' of system variable lower_case_table_names is not supported. SQL error (0). 不知道怎么解决？
-  - 同样命令配置在 mysql5.5 没问题，数据可以成功同步。
-  - tidb 针对 lower_case_table_names 无法修改，因此失败
-
-- multi-statement 的区别
-  - 事务内是 insert into xxx values(),(),(),..... ;
-  - 还是 insert into xxx ; insert into xxx ;
-    - create table xx (id int,age int) engine=InnoDB;
-    - insert into xx values(1,1);insert into xx values(2,2);insert into xx values(b,3);
-
-- 使用 docker-compose 启动一个 tidb 集群测试
-  - 该集群内包含 `tidb - 1、tikv - 3 、pd - 3 、Prometheus - 1 、Grafana - 1、 pushgateway - 1`
-  - 可以使用 mac pro 中高配以上或相同配置机器启动。
-  - https://github.com/pingcap/tidb-docker-compose
-    - 出现 ulimit 问题，应该添加 ulimit 模块
-    - ulimit
-
-## 文档连接
-
-- 火焰图
-  - https://pingcap.com/blog-cn/flame-graph/
-
-- release note
-  - https://github.com/pingcap/tidb/releases
-
-- spark 使用相关文档
-  - https://github.com/pingcap/docs-cn/blob/master/tispark/tispark-user-guide.md
-
-- tidb-http api
-  - https://github.com/pingcap/tidb/blob/master/docs/tidb_http_api.md
-  - https://github.com/pingcap/tidb/blob/master/server/http_status.go
-
-- tidb 所有变量
-  - https://github.com/pingcap/tidb/blob/master/sessionctx/variable/tidb_vars.go
-
-- REGION 自动平衡
-  - pd-ctl
-  - region 能控制自动调度吗，一般这样的调度都放到凌晨后
-  - https://github.com/pingcap/docs-cn/blob/master/tools/pd-control.md
-
-- analyze
-  - 可以查看到非精确值的 count
-  - https://github.com/pingcap/docs-cn/blob/master/sql/statistics.md
-
-
-- 这个错误的原因，是事务执行时间，超过 GC 间隔时间 (10m 钟)
-  - https://github.com/pingcap/docs-cn/blob/master/op-guide/history-read.md
-
-- alter table hot_spot shard_row_id_bits = 15 (分片数量 32768)
-  - https://github.com/pingcap/tidb/commit/04ef7d79928ac27f6fab53c944efbb523f896755#diff-caef8063af52c86ddcdb638aff3e5bd9
-
-***
-
-## TiDB 忘记密码
-
-- tidb 忘了密码怎么办？
-  - https://github.com/pingcap/docs-cn/blob/master/sql/privilege.md
-
-- 选一台 TiDB 节点，修改配置文件添加以下内容；使用 Linux 系统 root 用户启动该 TiDB 节点
-  - 重启后使用 `mysql -h 127.0.0.1 -u root` 登陆
+- 在集群中任选一台 TiDB 节点，修改配置文件添加以下内容；使用 Linux 系统 root 用户启动该 TiDB 节点
+  - 重启后使用 `mysql -h 127.0.0.1 -u root` 直连登陆该节点，执行语句修改密码
 
   ```toml
   [security]
@@ -96,12 +38,6 @@ tags:
 2. 执行 ansible-playbook rolling_update.yml --tags=tikv 滚动升级 tikv 组件(通过这个步骤更新配置文件与重启 tikv)
 3. 在 tidb-ansible/resource/bin 下找到 tikv-ctl
   * 执行 ./tikv-ctl --host={tikv-ip:tikv-port} compact
-
-***
-
-## 场景
-
-- 还有一点和大家同步一下，TiDB 只支持大小写敏感的字符集校验，SQL 里面的值要和表内数据大小写完全一致才能筛选出数据，所以这里只要注意一下 SQL 里面传值的大小写就好了，举个例子比如表 a 字段值有 ABC Abc abc 三条 ，SQL 里用 where a='Abc' 就只能筛出来一条，where a like '%abc%' 也是一样区分大小写的
 
 ### Tidb 查看 table 占用磁盘大小
 
@@ -168,6 +104,32 @@ tags:
 - metrics
   - `tikv->GC->GC Worker Actions` 看是否有 delete range
 
+## 问题收集场景
+
+### 步骤
+
+- tidb 对于 range scan，大范围扫描的查询有优化么？
+
+- 支持 binary 方式写入
+
+- 使用 goldengate 将数据从 oracle 复制到 tidb,
+  - ogg 执行登陆代码： dblogin sourcedb 时报错 ERROR OGG-00768 The Value '2' of system variable lower_case_table_names is not supported. SQL error (0). 不知道怎么解决？
+  - 同样命令配置在 mysql5.5 没问题，数据可以成功同步。
+  - tidb 针对 lower_case_table_names 无法修改，因此失败
+
+- multi-statement 的区别
+  - 事务内是 insert into xxx values(),(),(),..... ;
+  - 还是 insert into xxx ; insert into xxx ;
+    - create table xx (id int,age int) engine=InnoDB;
+    - insert into xx values(1,1);insert into xx values(2,2);insert into xx values(b,3);
+
+- 使用 docker-compose 启动一个 tidb 集群测试
+  - 该集群内包含 `tidb - 1、tikv - 3 、pd - 3 、Prometheus - 1 、Grafana - 1、 pushgateway - 1`
+  - 可以使用 mac pro 中高配以上或相同配置机器启动。
+  - https://github.com/pingcap/tidb-docker-compose
+    - 出现 ulimit 问题，应该添加 ulimit 模块
+    - ulimit
+
 ### TiDB 没有响应检查思路
 
 - Sql 没有响应，是指客户端连接不上么？
@@ -213,10 +175,12 @@ tags:
 
 ### 热点数据统计
 
-- coprocessor 进程占用 CPU 异常之高
+- 集群中某 tikv coprocessor 进程占用 CPU 比其他节点
   - 检查各 tidb.log
   - 搜索 COP_TASK / regions()
   - `grep TIME_COP_TASK tidb.log | awk '{print $7}' | grep region | awk -F"(" '{print $2}' | sort | uniq -c | sort -n | less`
+- 需要的是 sql 比如 connect id 或者 handleid 与 kv region 的映射关系
+- 这个问题是，首先需要命中 热点 region,根据热点region 当前日志解析 startkey 获取 tid,然后根据 tid 反查表信息，根据表信息再去 tidb 捞 日志
 
 ### MVCC 获取
 
