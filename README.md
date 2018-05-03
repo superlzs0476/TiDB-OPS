@@ -51,7 +51,7 @@
 
 ### Case-by-case
 
-- [TiDB AUTO_INCREMENT 功能测试](Case-by-case/180503-Disk-Space-recovery.md)
+- [TiKV 磁盘空间回收步骤记录](Case-by-case/180503-Disk-Space-recovery.md)
 
 ### SoftWare
 
