@@ -49,6 +49,10 @@
 - [TiDB Cluster 域名部署测试](Test/180406-TiDB-Domain.md)
 - [TiDB Online DDL 实操测试](Test/171010-TiDB-Online-DDL.md)
 
+### Case-by-case
+
+- [TiDB AUTO_INCREMENT 功能测试](Case-by-case/180503-Disk-Space-recovery.md)
+
 ### SoftWare
 
 - [Tmux 快捷键 & 速查表](SoftWare/tmux.md)
