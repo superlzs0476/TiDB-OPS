@@ -18,3 +18,5 @@ tags:
   - [SHARD_ROW_ID_BITS](https://github.com/pingcap/docs-cn/blob/master/sql/tidb-specific.md#shard_row_id_bits)
 - `_tidb_rowid` 隐藏列
   - [_tidb_rowid](https://github.com/pingcap/docs-cn/blob/master/sql/tidb-specific.md#_tidb_rowid)
+
+- Optimizer Hint 文档 [docs-cn](https://github.com/pingcap/docs-cn/blob/master/sql/tidb-specific.md)

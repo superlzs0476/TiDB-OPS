@@ -128,11 +128,11 @@ tags:
 
 ```BASH
 # 4k 基准连续顺序写
-fio -ioengine=libaio -bs=4k -direct=1 -thread -rw=write -size=10G -filename=PingCAP-test -name="PingCAP" -iodepth=4 -runtime=60
+fio -ioengine=psync -bs=4k -direct=1 -thread -rw=write -size=10G -filename=PingCAP-test -name="PingCAP" -iodepth=4 -runtime=60
 # 4k 基准连续顺序读
-fio -ioengine=libaio -bs=4k -direct=1 -thread -rw=read -size=10G -filename=PingCAP-test -name="PingCAP" -iodepth=4 -runtime=60
+fio -ioengine=psync -bs=4k -direct=1 -thread -rw=read -size=10G -filename=PingCAP-test -name="PingCAP" -iodepth=4 -runtime=60
 # 32k 基准随机读
-fio -ioengine=libaio -bs=32k -direct=1 -thread -rw=randread -size=10G -filename=PingCAP-test -name="PingCAP" -iodepth=4 -runtime=60
+fio -ioengine=psync -bs=32k -direct=1 -thread -rw=randread -size=10G -filename=PingCAP-test -name="PingCAP" -iodepth=4 -runtime=60
 ```
 
 ### DD
