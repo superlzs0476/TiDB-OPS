@@ -176,7 +176,14 @@ tags:
 
 ---
 
-## Systemd 的一些文档
+## FAQ
+
+### Error
+
+- `Job for Test-syncer.service failed because start of the service was attempted too often. See "systemctl status Test-syncer.service" and "journalctl -xe" for details. To force a start use "systemctl reset-failed Test-syncer.service" followed by "systemctl start Test-syncer.service" again.`
+  - 在 StartLimitInterval 时间内，重启次数到达  StartLimitBurst 设置值，需要使用 `systemctl reset-failed Test-syncer.service` 重置计数器，然后重启该服务
+
+### Systemd 的一些文档
 
 - systemd及系统初始化
   - https://open-doc.dingtalk.com/docs/doc.htm?treeId=412&articleId=107236&docType=1
