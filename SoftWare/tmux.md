@@ -10,43 +10,123 @@ categories:
 ---
 # Tmux 快捷键 & 速查表
 
-启动新会话：
+## 扩展阅读
+
+- [Tmux 使用手册](http://louiszhai.github.io/2017/09/30/tmux/)
+- [Arch linux Tmux (简体中文)](https://wiki.archlinux.org/index.php/Tmux_(%E7%AE%80%E4%BD%93%E4%B8%AD%E6%96%87))
+- [man Tmux](http://man7.org/linux/man-pages/man1/tmux.1.html)
+
+## Tmux 介绍
+
+#### 安装
+
+- Ubuntu
+
+`sudo apt-get install tmux`
+
+- Centos
+
+`yum install tmux -y`
+
+#### 会话，窗口，面板
+
+根据 tmux 的定义，在开启了 tmux 服务器后，会首先创建一个会话，而这个会话则会首先创建一个 窗口，其中仅包含一个面板；也就是说，这里看到的所谓终端控制台应该称作 tmux 的一个面板， 虽然其使用方法与终端控制台完全相同。
+
+tmux 使用 C/S 模型构建，主要包括以下单元模块：
+
+- server 服务器。输入 tmux 命令时就开启了一个服务器。
+- session 会话。一个服务器可以包含多个会话
+- window 窗口。一个会话可以包含多个窗口。
+- pane 面板。一个窗口可以包含多个面板。
+
+#### 初体验
+
+启动新会话
 
     tmux [new -s 会话名 -n 窗口名]
+    tmux new -s test -n tmux
 
-恢复会话：
+保存会话退出
 
-    tmux at [-t 会话名]
+    tmux detach # 断开当前会话，会话在后台运行
+    Ctrl + b  d # 快捷键保存退出当前会话
 
-列出所有会话：
+列出所有会话
 
+    tmux list-session
     tmux ls
 
-<a name="killSessions"></a>关闭会话：
+恢复会话
 
-    tmux kill-session -t 会话名
+    tmux a [-t 会话名]
+    tmux attach-session -t session-name     # 连接指定会话
+    tmux a -t session-name                  # 连接指定会话
+    tmux a                                  # 在上次保存退出位置登陆
 
-<a name="killAllSessions"></a>关闭所有会话：
+关闭会话
+
+    tmux kill-session           # 关闭服务，所有会话退出
+    tmux kill-session -t 会话名  # 指定会话退出
+    Ctrl + c                    # 在会话内强制退出
+
+关闭所有会话
 
     tmux ls | grep : | cut -d. -f1 | awk '{print substr($1, 0, length($1)-1)}' | xargs kill
 
-## 在 Tmux 中，按下 Tmux 前缀 `ctrl+b`，然后：
+## Tmux 快捷键
 
-### 会话
+> tmux 的所有指令，都包含同一个前缀，默认为 Ctrl+b，输入完前缀过后，控制台激活，命令按键才能生效。
 
-    :new<回车>  启动新会话
-    s           列出所有会话
-    $           重命名当前会话
+### 系统快捷键
 
-### <a name="WindowsTabs"></a>窗口 (标签页)
+前缀 | 指令 | 描述
+------- | ------- | -------
+Ctrl+b | ? | 显示快捷键帮助文档
+Ctrl+b | d | 断开当前会话
+Ctrl+b | D | 选择要断开的会话
+Ctrl+b | Ctrl+z | 挂起当前会话
+Ctrl+b | r | 强制重载当前会话
+Ctrl+b | s | 显示会话列表用于选择并切换
+Ctrl + b  | $ | 重命名当前会话
+Ctrl+b | : | 进入命令行模式，此时可直接输入ls等命令
+Ctrl+b | [ | 进入复制模式，按q退出
+Ctrl+b | ] | 粘贴复制模式中复制的文本
+Ctrl+b | ~ | 列出提示信息缓存
 
-    c  创建新窗口
-    w  列出所有窗口
-    n  后一个窗口
-    p  前一个窗口
-    f  查找窗口
-    ,  重命名当前窗口
-    &  关闭当前窗口
+### 窗口快捷键
+
+前缀 | 指令 | 描述
+------- | ------- | -------
+Ctrl+b | c | 新建窗口
+Ctrl+b | & | 关闭当前窗口（关闭前需输入y or n确认）
+Ctrl+b | 0~9 | 切换到指定窗口
+Ctrl+b | p | 切换到上一窗口
+Ctrl+b | n | 切换到下一窗口
+Ctrl+b | w | 打开窗口列表，用于且切换窗口
+Ctrl+b | , | 重命名当前窗口
+Ctrl+b | . | 修改当前窗口编号（适用于窗口重新排序）
+Ctrl+b | f | 快速定位到窗口（输入关键字匹配窗口名称）
+
+### 面板快捷键
+
+前缀 | 指令 | 描述
+------- | ------- | -------
+Ctrl+b | " | 当前面板上下一分为二，下侧新建面板
+Ctrl+b | % | 当前面板左右一分为二，右侧新建面板
+Ctrl+b | o | 选择下一面板
+Ctrl+b | x | 关闭当前面板（关闭前需输入y or n确认）
+Ctrl+b | z | 最大化当前面板，再重复一次按键后恢复正常（v1.8版本新增）
+Ctrl+b | ! | 将当前面板移动到新的窗口打开（原窗口中存在两个及以上面板有效）
+Ctrl+b | ; | 切换到最后一次使用的面板
+Ctrl+b | q | 显示面板编号，在编号消失前输入对应的数字可切换到相应的面板
+Ctrl+b | { | 向前置换当前面板
+Ctrl+b | } | 向后置换当前面板
+Ctrl+b | Ctrl+o | 顺时针旋转当前窗口中的所有面板
+Ctrl+b | 方向键 | 移动光标切换面板
+Ctrl+b | 空格键 | 在自带的面板布局中循环切换
+Ctrl+b | Alt+方向键 | 以5个单元格为单位调整当前面板边缘
+Ctrl+b | Ctrl+方向键 | 以1个单元格为单位调整当前面板边缘（Mac下被系统快捷键覆盖）
+Ctrl+b | t | 显示时钟
 
 ### 调整窗口排序
 
@@ -54,30 +134,17 @@ categories:
     swap-window -t 1       交换当前和 1 号窗口
     move-window -t 1       移动当前窗口到 1 号
 
-### <a name="PanesSplits"></a>窗格（分割窗口） 
-
-    %  垂直分割
-    "  水平分割
-    o  交换窗格
-    x  关闭窗格
-    ⍽  左边这个符号代表空格键 - 切换布局
-    q 显示每个窗格是第几个，当数字出现的时候按数字几就选中第几个窗格
-    { 与上一个窗格交换位置
-    } 与下一个窗格交换位置
-    z 切换窗格最大化/最小化
-
-### <a name="syncPanes"></a>同步窗格
+### 同步窗格
 
 这么做可以切换到想要的窗口，输入 Tmux 前缀和一个冒号呼出命令提示行，然后输入：
 
-```
+```bash
 :setw synchronize-panes
 ```
 
 你可以指定开或关，否则重复执行命令会在两者间切换。
 这个选项值针对某个窗口有效，不会影响别的会话和窗口。
 完事儿之后再次执行命令来关闭。[帮助](http://blog.sanctum.geek.nz/sync-tmux-panes/)
-
 
 ### 调整窗格尺寸
 
@@ -89,11 +156,10 @@ categories:
     PREFIX : resize-pane -R          当前窗格向右扩大 1 格
     PREFIX : resize-pane -D 20       当前窗格向下扩大 20 格
     PREFIX : resize-pane -t 2 -L 20  编号为 2 的窗格向左扩大 20 格
-    
-    
+
 ### 文本复制模式：
 
-按下**前缀 [**进入文本复制模式。可以使用方向键在屏幕中移动光标。默认情况下，方向键是启用的。在配置文件中启用 Vim 键盘布局来切换窗口、调整窗格大小。Tmux 也支持 Vi 模式。要是想启用 Vi 模式，只需要把下面这一行添加到 .tmux.conf 中：
+按下 ** 前缀 [** 进入文本复制模式。可以使用方向键在屏幕中移动光标。默认情况下，方向键是启用的。在配置文件中启用 Vim 键盘布局来切换窗口、调整窗格大小。Tmux 也支持 Vi 模式。要是想启用 Vi 模式，只需要把下面这一行添加到 .tmux.conf 中：
 
     setw -g mode-keys vi
 
@@ -160,7 +226,7 @@ categories:
     # 居中窗口列表
     set -g status-justify centre
 
-    # 最大化/恢复窗格
+    # 最大化 / 恢复窗格
     unbind Up bind Up new-window -d -n tmp \; swap-pane -s tmp.1 \; select-window -t tmp
     unbind Down
     bind Down last-window \; swap-pane -s tmp.1 \; kill-window -t tmp
@@ -196,7 +262,7 @@ bind-key l select-pane -R
 # copy-mode 将快捷键设置为 vi 模式
 setw -g mode-keys vi
 
-# 启用鼠标(Tmux v2.1)
+# 启用鼠标 (Tmux v2.1)
 set -g mouse on
 
 # 更新配置文件
