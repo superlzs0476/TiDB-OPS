@@ -64,7 +64,7 @@ Use "help store [command] " for more information about a command.
 ```
 
 - 调整 store 194 节点的 leader 与 region 权重
-  - 权重可调范围 `0.1 -- 1` 10 个等级，默认值为 1
+  - 权重可调范围 `0.000001 到 1` ，默认值为 1
   - 格式为： `store weight storeID leader权重 region权重`
 
 ```bash
@@ -98,11 +98,11 @@ Use "help store [command] " for more information about a command.
 
 ### 添加 store 调度
 
-> 添加指定 store `evict scheduler` ，控制该 store 在集群内的状态
+> 添加指定 store `evict scheduler` ，控制该 store 在集群内 region leader 数量为 0 或者接近 0 值，不能控制该 store 是否增加成员副本。
 
 - 通过 pd-ctl 工具调整 store 权重
-  - 优势：使用 API 调用，操作方便，不涉及 store 上下线等危险操作 （当通过调整 region weight 无法达到释放空间时，可使用该方案）
-  - 缺点：该节点添加调度器后，在集群内不接受主动读写操作(该 store 不存在 region leader ， 所以无法读写不在此节点，该单节点短暂挂掉不影响集群读写)
+  - 优势：该节点添加调度器后，该 store 不存在 region leader ，该单节点短暂挂掉或重启不影响集群读写（该方案可与 region weight 同时使用，不过该方案更多是用于重启 tikv ，业务不受影响场景）
+  - 缺点：该调度器并不能控制空间使用状态
 
 - 添加调度器，将 store 194 上所有 leader 自动迁移到其他节点。10000 数量 leader 仅需 5 - 10 分钟
   - 该调度器添加后持续生效，需要删除调度器释放 store `evict scheduler` 状态
@@ -133,7 +133,7 @@ curl -X DELETE "http://10.10.10.15:2379/pd/api/v1/schedulers/evict-leader-schedu
 
 ### 下线 Store
 
-> 该方案可作为压轴方案 (集群内只有三台 TiKV 时，此方案不适用)
+> 该方案可作为压轴方案 (集群内只有三台 TiKV 时，下线一台后，region 无处调度，但剩余两副本可继续维持集群使用)
 
 - 通过 pd-ctl 工具连接 PD Cluster
 

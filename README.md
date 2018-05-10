@@ -52,6 +52,7 @@
 ### Case-by-case
 
 - [TiKV 磁盘空间回收步骤记录](Case-by-case/180503-Disk-Space-recovery.md)
+- [kill tcp connect](Case-by-case/180505-tcpkill.md)
 
 ### SoftWare
 
