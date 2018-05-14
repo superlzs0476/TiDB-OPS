@@ -7,7 +7,7 @@
 ## TiDB Blog List
 
 - [TiDB Weekly](http://weekly.pingcap.com "Weekly update in TiDB")
-- [TiDB Blog-cn List](TiDB-Blog-List.md "TiDB 官方博文收集整理")
+- [TiDB Blog-cn List](TiDB-Blog-List.md) / TiDB 官方博文收集整理
 
 ## Main
 
