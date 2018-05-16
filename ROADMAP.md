@@ -18,6 +18,20 @@ tags:
 * [X] TiSpark 服务安装 部署 测试
 * [ ] TiDB 业务场景问题收集与排查方法
 
+### Case-by-case
+
+* [X] TiKV 磁盘空间回收步骤记录
+* [X] kill tcp connect
+
+### Troubleshooting
+
+* [ ] TiDB-Ansible
+* [ ] TiDB-Binlog 日志文件
+* [ ] Syncer-Loader 日志文件
+* [ ] TiDB
+* [ ] TiKV
+* [ ] PD
+
 ## Monitor
 
 * [X] Node_exporter README
@@ -39,6 +53,8 @@ tags:
 * [X] Screen
 * [X] Tmux
 * [ ] NextCloud
+* [ ] Megacli
+* [ ] 科学上网
 
 ----
 

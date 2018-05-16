@@ -13,16 +13,16 @@ tags:
 
 ## 文档引用
 
-[创建一个 raid 10](https://serverfault.com/questions/519917/how-to-create-raid-10-with-megacli)
-[](http://www.gaizaoren.org/archives/tag/megacli)
-[](http://imysql.com/tag/megacli)
-[](http://www.opstool.com/article/184)
-[](http://blog.chinaunix.net/uid-25135004-id-3139293.html)
-[cc 校验 / 初始化](http://w55554.blog.51cto.com/947626/1211844)
-[wiki](https://www.xargs.cn/doku.php/lsi:megacli%E5%AE%8C%E6%95%B4%E6%93%8D%E4%BD%9C%E6%89%8B%E5%86%8C)
-[服务器阵列卡及硬盘健康监控](http://blog.phpdba.com/post/685)
+- [创建一个 raid 10](https://serverfault.com/questions/519917/how-to-create-raid-10-with-megacli)
+- [Dell Raid 卡命令行控制 megacli](http://www.gaizaoren.org/archives/tag/megacli)
+- [常用 PC 服务器阵列卡、硬盘健康监控](http://imysql.com/tag/megacli)
+- [Megacli 常用命令汇总](http://www.opstool.com/article/184)
+- [MegaCli 监控 raid 状态](http://blog.chinaunix.net/uid-25135004-id-3139293.html)
+- [cc 校验 / 初始化](http://w55554.blog.51cto.com/947626/1211844)
+- [wiki](https://www.xargs.cn/doku.php/lsi:megacli%E5%AE%8C%E6%95%B4%E6%93%8D%E4%BD%9C%E6%89%8B%E5%86%8C)
+- [服务器阵列卡及硬盘健康监控](http://blog.phpdba.com/post/685)
 
-## IO
+## DISK Metrics
 
 ### IO 操作
 
@@ -38,7 +38,7 @@ tags:
 - IO 响应时间 (IO Response Time)
 - 传输速度 (Transfer Rate)/ 吞吐率 (Throughput)
 
-## RAID(Redundant Array Of Inexpensive Disks)
+## RAID (Redundant Array Of Inexpensive Disks)
 
 RAID0，RAID1，RAID5，RAID6，RAID10
 
@@ -107,9 +107,9 @@ RAID0，RAID1，RAID5，RAID6，RAID10
 
 ----
 
-## MegaCli 工具
+## MegaCli Software
 
-### MegaCli 安装
+### MegaCli Install
 
 - 下载 MegaCli
   - http://www.lsi.com/support/Pages/download-results.aspx?keyword=MegaCLI
@@ -197,7 +197,7 @@ parm:           use_threaded_interrupts:int
 - megacli -AdpAllInfo -aAll 显示所有适配器信息
 - megacli -LDInfo -LALL -aAll 显示所有逻辑磁盘组信息
 - megacli -PDList -aAll 显示所有的物理信息
-- megacli -AdpBbuCmd -GetBbuStatus -aALL |grep ‘Charger Status’ 查看充电状态
+- megacli -AdpBbuCmd -GetBbuStatus -aALL | grep 'Charger Status' 查看充电状态
 - megacli -AdpBbuCmd -GetBbuStatus -aALL 显示 BBU 状态信息
 - megacli -AdpBbuCmd -GetBbuCapacityInfo -aALL 显示 BBU 容量信息
 - megazli -AdpBbuCmd -GetBbuDesignInfo -aALL 显示 BBU 设计参数
@@ -220,9 +220,9 @@ parm:           use_threaded_interrupts:int
 
 ----
 
-## RAID CACHE FAQ
+## FAQ
 
-### 请问哪些场合适合使用大缓存的 RAID 卡
+### 哪些场合适合使用大缓存的 RAID 卡
 
 - 缓存替换策略也能影响缓存大小的选择：如果某个缓存替换策略足够优秀，跟其他缓存策略相比，即使缓存很小，依然能够维持较高的缓存命中率，达到更好的性能；
 
