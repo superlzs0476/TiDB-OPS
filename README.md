@@ -46,6 +46,7 @@
 - [Tmux 快捷键 & 速查表](SoftWare/tmux.md)
 - [Screen 速查表](SoftWare/screen.md)
 - [NextCloud 安装运维调测](SoftWare/nextcloud.md)
+- [RAID 与 Megacli](SoftWare/Megacli.md)
 
 ### API
 
