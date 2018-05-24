@@ -116,6 +116,11 @@ Cache 在读数据方面的作用一样不可忽视，因为如果所需要读�
   Current Access Policy: Read/Write
   ```
 
+  - 修改 RAID Cache 策略
+    - megacli -LDSetProp 指定策略 指定逻辑设备
+    - `megacli -LDSetProp [-WB|-WT|-NoCachedBadBBU|-CachedBadBBU|-NORA|-RA|-ADRA|-Cached|-Direct ] [-Lall -aAll|-L0 -a0]`
+    - 如： `megacli -LDSetProp -WT -Lall -aAll` 修改全部逻辑设备  or `megacli -LDSetProp -WT -L0 -a0` 修改第一个逻辑设备
+
 - 写策略
   - Write Through：系统的写磁盘操作并不利用阵列卡的 Cache，而是直接与磁盘进行数据的交互
   - Write Back：利用阵列 Cache 作为系统与磁盘间的中间人，系统先将数据交给 Cache，然后再由 Cache 将数据传给磁盘，可提高写入性能
@@ -131,8 +136,8 @@ Cache 在读数据方面的作用一样不可忽视，因为如果所需要读�
   - Cached：读操作缓存到 RAID 卡缓存。
 
 - BBU 策略：(BBU(电池) 出现问题是否启用 Write Cache )
-  - Write Cache OK if Bad BBU：BBU 出现问题仍启用 Write Cache, 这种配置是非常不安全的，除非是有 UPS 或者双电源的情况下。
-  - No Write Cache if Bad BBU：BBU 出现问题不使用 Write Cache，从 WriteBack 自动切换到 WriteThrough，默认配置。
+  - Write Cache OK if Bad BBU：BBU 出现问题仍启用 Write Cache, 这种配置是非常不安全的，除非是有 UPS 或者双电源的情况下
+  - No Write Cache if Bad BBU：BBU 出现问题不使用 Write Cache，从 WriteBack 自动切换到 WriteThrough，默认配置
 
 ### RAID BBU 电池
 
@@ -214,12 +219,139 @@ Cache 在读数据方面的作用一样不可忽视，因为如果所需要读�
 
 - 建立命令软链接
 
-  - `ln -s /opt/MegaRAID/MegaCli/MegaCli64 /usr/local/bin/megacli`
+  - `ln -s /opt/MegaRAID/MegaCli/MegaCli64 /usr/bin/megacli`
 
-- 查看当前 RAID 信息
+### 使用 MegaCli 重组 RAID
+
+> 物理机有 12 块 300G 的 SAS 磁盘；前两块磁盘组成 RAID 1 作为系统盘，后面 10 块盘默认为单盘 RAID0；等同磁盘直接挂载到系统，现在要将最后 10 块盘重新做成 RAID 50，在系统中识别成 2T 大小的逻辑磁盘
+
+- 查看状态
+  - `megacli -LdInfo -LALL -aAll`
 
   ```bash
-  [root@jeff ~]# megacli -LDInfo -LALL -aALl
+  Adapter 0 -- Virtual Drive Information:
+  Virtual Drive: 0 (Target Id: 0)
+  Name                :
+  RAID Level          : Primary-1, Secondary-0, RAID Level Qualifier-0
+  Size                : 278.875 GB
+  Sector Size         : 512
+  Is VD emulated      : No
+  Mirror Data         : 278.875 GB
+  State               : Optimal
+  Strip Size          : 64 KB
+  Number Of Drives    : 2
+  Span Depth          : 1
+  Default Cache Policy: WriteBack, ReadAhead, Direct, No Write Cache if Bad BBU
+  Current Cache Policy: WriteBack, ReadAhead, Direct, No Write Cache if Bad BBU
+  Default Access Policy: Read/Write
+  Current Access Policy: Read/Write
+  Disk Cache Policy   : Disk's Default
+  Encryption Type     : None
+  Bad Blocks Exist: No
+  PI type: No PI
+
+  Is VD Cached: No
+
+  。。。 。。。
+
+
+  Virtual Drive: 12 (Target Id: 12)
+  Name                :
+  RAID Level          : Primary-0, Secondary-0, RAID Level Qualifier-0
+  Size                : 278.875 GB
+  Sector Size         : 512
+  Is VD emulated      : No
+  Parity Size         : 0
+  State               : Optimal
+  Strip Size          : 256 KB
+  Number Of Drives    : 1
+  Span Depth          : 1
+  Default Cache Policy: WriteBack, ReadAhead, Cached, Write Cache OK if Bad BBU
+  Current Cache Policy: WriteBack, ReadAhead, Cached, Write Cache OK if Bad BBU
+  Default Access Policy: Read/Write
+  Current Access Policy: Read/Write
+  Disk Cache Policy   : Disk's Default
+  Encryption Type     : None
+  Bad Blocks Exist: No
+  PI type: No PI
+
+  Is VD Cached: No
+
+  ```
+
+- 删掉已有 RAID 0
+  - 其中 L1 替换数字 1..10，一直到这些单盘 RAID 0 删干净
+  - `megacli -cfglddel -L1 -a0`
+  - `megacli -cfglddel -L2 -a0`
+  - `megacli -cfglddel -L3 -a0`
+  - `megacli -cfglddel -L4 -a0`
+  - `megacli -cfglddel -L5 -a0`
+  - `megacli -cfglddel -L6 -a0`
+  - `megacli -cfglddel -L7 -a0`
+  - `megacli -cfglddel -L8 -a0`
+  - `megacli -cfglddel -L9 -a0`
+  - `megacli -cfglddel -L10 -a0`
+
+- 创建 raid 50
+  - megacli -CfgSpanAdd -r50 -Array0[8:2,8:3,8:4,8:5,8:6] Array1[8:7,8:8,8:9,8:10,8:11] WB RA Direct CachedBadBBU -a0
+    - `-Array0[8:2,8:3,8:4,8:5,8:6]` 为每块物理磁盘标识符
+      - 磁盘标识符通过该命令获取 `megacli -PDlist -aall | grep -e '^Enclosure Device ID:' -e '^Slot Number:'`
+    - `-Hsp[8:12]` 添加该参数可指定为热备盘
+
+- 查看阵列后台初始化进度
+  - `megacli -LDBI -ShowProg -LALL -aALL`
+
+  ```bash
+  [root@jeff ]# megacli -LDBI -ShowProg -LALL -aALL
+
+  Background Initialization on VD #0 is not in Progress.
+  Background Initialization on VD #1 is not in Progress.
+  Background Initialization on VD #2 is not in Progress.
+  Background Initialization on VD #3 is not in Progress.
+  Background Initialization on VD #4 is not in Progress.
+  Background Initialization on VD #5 is not in Progress.
+  Background Initialization on VD #6 is not in Progress.
+  Background Initialization on VD #7 is not in Progress.
+  Background Initialization on VD #8 is not in Progress.
+  Background Initialization on VD #9 is not in Progress.
+  Background Initialization on VD #10 is not in Progress.
+  ```
+
+  - 动态可视化文字界面显示初始化进度
+    - `megacli -LDBI -ProgDsply -LALL -aALL`
+  - 查看某个物理磁盘重建进度
+    - `megacli -PDRbld -ShowProg -PhysDrv [8:5] -a0`
+  - 以动态可视化文字界面显示物理磁盘重建进度
+    - `megacli -PDRbld -ProgDsply -PhysDrv [8:5] -a0`
+
+- 查看 cc 校验计划
+  - megacli -adpccsched -info -a0
+
+  ```bash
+  [root@jeff ]# megacli -adpccsched -info -a0
+
+  Adapter #0
+
+  Operation Mode: Concurrent
+  Execution Delay: 168
+  Next start time: 05/26/2018, 03:00:00
+  Current State: Stopped
+  Number of iterations: 109
+  Number of VD completed: 1
+  Excluded VDs          : None
+  Exit Code: 0x00
+  ```
+
+- cc 校验进度
+  - megacli -ldcc -progdsply -L1 -a0
+
+- 快速初始化
+  - megacli -LDInit -start –L1  -a0
+
+- 查看当前所有 RAID 信息
+
+  ```bash
+  [root@jeff ~]# megacli -LDInfo -LALL -aALL
 
   Adapter 0 -- Virtual Drive Information:
   Virtual Drive: 0 (Target Id: 0)
@@ -269,50 +401,69 @@ Cache 在读数据方面的作用一样不可忽视，因为如果所需要读�
 
   ```
 
-### 使用 MegaCli 重组 RAID
+- 获取磁盘标识符
+  - `megacli -PDlist -aall | grep -e '^Enclosure Device ID:' -e '^Slot Number:'`
 
-- 查看状态
-  - megacli -LdInfo -LALL -aAll
-- 删掉已有 raid
-  - megacli -cfglddel -L1 -a0
-  - megacli -cfglddel -L2 -a0
-  - megacli -cfglddel -L3 -a0
-  - megacli -cfglddel -L4 -a0
-  - megacli -cfglddel -L5 -a0
-  - megacli -cfglddel -L6 -a0
-  - megacli -cfglddel -L7 -a0
-  - megacli -cfglddel -L8 -a0
-  - megacli -cfglddel -L9 -a0
-  - megacli -cfglddel -L10 -a0
-  - 其中 L1 替换数字 1，2，3，4 一直到这些单盘 raid0 删干净
-- 创建 raid 10
-  - megacli -CfgSpanAdd -r50 -Array0[8:2,8:3,8:4,8:5,8:6] Array1[8:7,8:8,8:9,8:10,8:11] WB RA Direct CachedBadBBU -a0
-- 查看进度
-  - megacli -LDBI -ShowProg -LALL -aALL
-- cc 校验进度
-  - megacli -ldcc -progdsply -L1 -a0
-- 查看 cc 校验计划
-  - megacli -adpccsched -info -a0
-- 快速初始化
-  - megacli -LDInit  -start –L1  -a0
-- 查看当前所有 raid
-  - megacli -ldinfo -lall -aall
-- 获取磁盘标识
-  - megacli -PDList -aAll -NoLog | grep -Ei "(enclosure|slot)"
-  - megacli -PDlist -aall | grep -e '^Enclosure Device ID:' -e '^Slot Number:'
+  ```bash
+  Enclosure Device ID: 8
+  Enclosure position: 1
+  Enclosure Device ID: 8
+  Enclosure position: 1
+  Enclosure Device ID: 8
+  Enclosure position: 1
+  Enclosure Device ID: 8
+  Enclosure position: 1
+  Enclosure Device ID: 8
+  Enclosure position: 1
+  Enclosure Device ID: 8
+  Enclosure position: 1
+  Enclosure Device ID: 8
+  Enclosure position: 1
+  Enclosure Device ID: 8
+  Enclosure position: 1
+  Enclosure Device ID: 8
+  Enclosure position: 1
+  Enclosure Device ID: 8
+  Enclosure position: 1
+  Enclosure Device ID: 8
+  Enclosure position: 1
+  Enclosure Device ID: 8
+  Enclosure position: 1
+  ```
 
-### 其他命令
+### 相关命令
 
 命令 | 解释
  ------ | -------
-megacli -AdpGetTime –aALL | 显示适配器时间
-megacli -adpCount | 显示 RAID 卡数量
-megacli -AdpAllInfo -aAll | 显示 RAID 卡信息
-megacli -FwTermLog -Dsply -aALL | 查看 raid 卡日志
-megacli -PDList -aALL | 显示当前所有物理设备信息
-megacli -LDInfo -LALL –aAll | 显示当前所有逻辑设备信息
-megacli -cfgdsply -aALL | 显示 Raid 卡型号，Raid 设置，Disk 相关信息
-megacli -LdPdInfo -aAll -NoLog | 不懂
+`megacli -AdpGetTime –aALL ` | 显示适配器时间
+`megacli -adpCount         ` | 显示 RAID 卡数量
+`megacli -AdpAllInfo -aAll ` | 显示 RAID 卡信息
+`megacli -FwTermLog -Dsply -aALL ` | 查看 raid 卡日志
+`megacli -PDList -aALL           ` | 显示当前所有物理设备信息
+`megacli -LDInfo -LALL –aAll     ` | 显示当前所有逻辑设备信息
+`megacli -cfgdsply -aALL         ` | 显示 Raid 卡型号，Raid 设置，Disk 相关信息
+`megacli -LdPdInfo -aAll -NoLog  ` | 不懂
+`megacli -DiscardPreservedCache -Lall -a0 -NoLOG ` | 清空所有的缓存
+`megacli -LDInit -ShowProg -LALL -aALL ` | 查看初始化同步块的过程
+`megacli -LDBI -ShowProg -LALL -aALL`  | 查看阵列后台初始化进度
+`megacli -LDBI -ProgDsply -LALL -aALL` | 动态可视化文字界面显示初始化进度
+`megacli -PDRbld -ShowProg -PhysDrv [8:5] -a0`  | 查看某个物理磁盘重建进度
+`megacli -PDRbld -ProgDsply -PhysDrv [8:5] -a0` | 以动态可视化文字界面显示物理磁盘重建进度
+`megacli -CfgLdDel -L5 -a0 ` | 删除 RAID 阵列
+`megacli -PDHSP -Set [-EnclAffinity] [-nonRevertible] -PhysDrv[32:5] -a0 ` | 指定第 5 块盘作为全局热备
+`megacli -PDHSP -Set [-Dedicated [-Array1]] [-EnclAffinity] [-nonRevertible] -PhysDrv[32:5] -a0 ` | 指定为某个阵列的专用热备
+`megacli -PDHSP -Rmv -PhysDrv[32:5] -a0 ` | 删除全局热备
+`megacli -PDOnline -PhysDrv [32:4] -a0  ` | 将某块物理盘上线
+`megacli -PDOffline -PhysDrv [32:4] -a0 ` | 将某块物理盘下线
+`megacli -pdgetmissing -a0              ` | 查看raid陈列中掉线的硬盘
+`megacli -LDInit  -start –L0  -a0       ` | 快速初始化
+`megacli -LDInit  -start  -full –L0 -a0 ` | 完全初始化
+`megacli -LDInit  -progdsply -L0 -a0    ` | 显示初始化的进度
+`megacli -LDInit  -abort  -L0  -a0      ` | 结束完全初始化
+`megacli -AdpBbuCmd -BbuLearn a0        ` | 手动充电
+`megacli -AdpBbuCmd -GetBbuStatus -aALL ` | 查看充电状态
+`megacli -AdpBbuCmd -GetBbuStatus -aALL ` | 查看充电进度百分比
+`megacli -FwTermLog dsply -a0 > /tmp/Megacli.log ` | 查看 Megacli log
 
 ### 磁盘缓存策略
 
@@ -333,14 +484,7 @@ megacli -LdPdInfo -aAll -NoLog | 不懂
 
 ### 文档引用
 
-- [创建一个 raid 10](https://serverfault.com/questions/519917/how-to-create-raid-10-with-megacli)
-- [Dell Raid 卡命令行控制 megacli](http://www.gaizaoren.org/archives/tag/megacli)
-- [常用 PC 服务器阵列卡、硬盘健康监控](http://imysql.com/tag/megacli)
-- [Megacli 常用命令汇总](http://www.opstool.com/article/184)
-- [MegaCli 监控 raid 状态](http://blog.chinaunix.net/uid-25135004-id-3139293.html)
-- [cc 校验 / 初始化](http://w55554.blog.51cto.com/947626/1211844)
-- [wiki](https://www.xargs.cn/doku.php/lsi:megacli%E5%AE%8C%E6%95%B4%E6%93%8D%E4%BD%9C%E6%89%8B%E5%86%8C)
-- [服务器阵列卡及硬盘健康监控](http://blog.phpdba.com/post/685)
+- [MegaCLI 工具的使用](http://www.51niux.com/?id=77) # 在线创建raid阵列，删除阵列，查看进度
 
 ### 哪些场合适合使用大缓存的 RAID 卡
 
