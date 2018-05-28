@@ -15,12 +15,13 @@
 
 ### Monitor
 
-- [Node_exporter README](Monitor/170601-Node_exporter.md)
-- [使用 Blackbox_exporter 监测主机与服务状态](Monitor/180401-blackbox_exporter.md)
-- [告警如何炼成的](Monitor/171212-Alert-Mind.md)
-- [AlertManager 安装 & 部署](Monitor/180323-AlertManager-Deploy.md)
-- [AlertManager 进阶操作-生产环境应用](Monitor/180412-Alert.rules.md)
-- [Grafana & Prometheus 监控组件问题收集与排查思路](Monitor/170909-Monitor-FAQ.md)
+- [Prometheus + Grafana = TiDB 监控架构](Monitor/170601-Prometheus-Grafana.md)
+- [Node_exporter 主机性能状态收集](Monitor/170602-Node_exporter.md)
+- [Blackbox_exporter 主动监测主机与服务状态](Monitor/170603-Blackbox_exporter.md)
+- [定制一条告警规则与运维监控处理流程](Monitor/170605-Alert-Rules-Case.md)
+- [AlertManager 生产环境应用场景](Monitor/170607-AlertManager.md)
+- [Mysql_export 性能状态监测收集](Monitor/170701-Mysql_export.md)
+- [Kafka_export 性能状态监测收集](Monitor/170702-Kafka_export.md)
 
 ### Docs
 

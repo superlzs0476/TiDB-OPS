@@ -1,7 +1,7 @@
 ---
-title: 使用 Blackbox_exporter 监测主机与服务状态
-date: 2018-04-01 15:34:01
-updated: 2018-04-13 13:49:26
+title: Blackbox_exporter 主动监测主机与服务状态
+date: 2017-06-03 15:34:01
+updated: 2017-06-05 13:49:26
 categories:
   - Monitor
 tags:
@@ -10,9 +10,11 @@ tags:
   - Proemtheus
   - Blackbox
 ---
-# 使用 Blackbox_exporter 监测主机与服务状态
+# Blackbox_exporter 主动监测主机与服务状态
 
 ## Blackbox_exporter Deploy
+
+- [blackbox_exporter](https://github.com/prometheus/blackbox_exporter) 是 Prometheus 官方提供的 exporter 之一，可以提供 http、dns、tcp、icmp 的监控数据采集
 
 - Binary
   - [Release Download](https://github.com/prometheus/blackbox_exporter/releases)
@@ -28,6 +30,11 @@ tags:
 - blackbox.yml template
   - 通过 blackbox.yml 定义模块详细信息
   - 在 Prometheus 配置文件中引用该模块以及配置被监控目标主机
+
+### blackbox.yml 配置文件
+
+> 如无特殊需求，使用默认配置文件即可
+> [blackbox-good.yml](https://github.com/prometheus/blackbox_exporter/blob/master/config/testdata/blackbox-good.yml) 官方配置文件案例
 
 ```YAML
 modules:
@@ -70,10 +77,6 @@ modules:
       preferred_ip_protocol: "ip4"
 ```
 
-## blackbox_exporter 场景
-
-- [blackbox_exporter](https://github.com/prometheus/blackbox_exporter) 是 Prometheus 官方提供的 exporter 之一，可以提供 http、dns、tcp、icmp 的监控数据采集。
-
 ### Blackbox_exporter 功能测试
 
 - HTTP 测试
@@ -89,7 +92,7 @@ modules:
 
 - 阅读 [icmp.go](https://github.com/prometheus/blackbox_exporter/blob/master/prober/icmp.go) 了解 ICMP 模块工作
 - 以下内容引用 [用 Prometheus 进行网络质量 Ping 监控](https://www.iamle.com/archives/2130.html)
-- 相关代码块添加到 Prometheus 文件内
+- 相关代码块添加到 Prometheus 配置文件内
 
 ```YAML
   - job_name: 'ping_all'
@@ -261,15 +264,77 @@ modules:
     method: GET
   ```
 
+### 告警测试案例
+
 - 判断 probe_success metric 结果值，达到告警效果
   - 成功 == 1
   - 失败 == 0
+
+- 创建 `port.rules.yml` 文件，写入以下告警规则
+
+```yaml
+  - alert: TiDB_is_Down
+    expr: probe_success{group="tidb"} == 0
+    for: 3m
+    labels:
+      env: test-cluster
+      level: port
+      expr: probe_success{group="tidb"} == 0
+    annotations:
+      description: 'alert:{{ $labels.expr }} instance:
+        {{ $labels.instance }} values: {{ $value }}'
+      value: '{{ $value }}'
+      summary: TiDB_is_Down
+
+  - alert: TiKV_is_Down
+    expr: probe_success{group="tikv"} == 0
+    for: 3m
+    labels:
+      env: test-cluster
+      level: port
+      expr: probe_success{group="tikv"} == 0
+    annotations:
+      description: 'alert:{{ $labels.expr }} instance:
+        {{ $labels.instance }} values: {{ $value }}'
+      value: '{{ $value }}'
+      summary: TiKV_is_Down
+
+  - alert: PD_is_Down
+    expr: probe_success{group="pd"} == 0
+    for: 3m
+    labels:
+      env: test-cluster
+      level: port
+      expr: probe_success{group="pd"} == 0
+    annotations:
+      description: 'alert:{{ $labels.expr }} instance:
+        {{ $labels.instance }} values: {{ $value }}'
+      value: '{{ $value }}'
+      summary: PD_is_Down
+```
+
+#### 更新 Prometheus 配置文件
+
+- Prometheus 配置文件中添加 `port.rules.yml` 字段，修改完成后重启生效
+  - 如果 Prometheus 已经引入 Alertmanger 服务，Prometheus 监控到端口 down 掉后会触发告警
+
+```yaml
+rule_files:
+  - 'node.rules.yml'
+  - 'blacker.rules.yml'
+  - 'bypass.rules.yml'
+  - 'pd.rules.yml'
+  - 'tidb.rules.yml'
+  - 'tikv.rules.yml'
+  - 'binlog.rules.yml'
+  - 'port.rules.yml' # 端口监测告警规则文件
+```
 
 ## Grafana 展示
 
 - 部署 Grafana 服务
   - 下载 [Grafana](https://grafana.com/grafana/download)
   - 部署 [Grafana](http://docs.grafana.org/installation/rpm/)
-- 利用以下几个 metrics 构建页面
+- 利用以下 metrics 构建页面
   - probe_success
   - probe_duration_seconds

@@ -1,13 +1,13 @@
 ---
-title: Node_exporter README
-date: 2017-06-01 21:40:52
-updated: 2017-06-06 21:40:52
+title: Node_exporter 主机性能状态收集
+date: 2017-06-02 11:40:52
+updated: 2017-06-03 21:40:52
 categories:
   - Monitor
 tags:
   - Node_exporter
 ---
-# Node_exporter README
+# Node_exporter 主机性能状态收集
 
 ## Collector
 
