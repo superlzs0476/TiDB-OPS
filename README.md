@@ -4,10 +4,11 @@
 
 - bandwagonhost [affiliates](https://bandwagonhost.com/aff.php?aff=1572)
 
-## TiDB Blog List
+## TiDB Technology
 
 - [TiDB Weekly](http://weekly.pingcap.com "Weekly update in TiDB")
 - [TiDB Blog-cn List](TiDB-Blog-List.md) / TiDB 官方博文收集整理
+- [The Third World](The-Third-World.md) / TiDB 周边技术文档收集
 
 ## Main
 
