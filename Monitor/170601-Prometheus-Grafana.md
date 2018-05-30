@@ -116,7 +116,7 @@ Grafana 的权限分为三个等级：Viewer、Editor 和 Admin，Viewer 只能�
   - 一个 row 由 1~n 个 panel 组成。
   - 一个 panel 可以一个 Graph、Singlestat、Table 等。
 
-![Grafna-dashboard 组成](/Media/170601-2-Grafna-dashboard.svg)
+![Grafna-dashboard 组成](/Media/170601-2-Grafna-dashboard.jpg)
 
 #### 报警（Alert）
 
@@ -132,7 +132,7 @@ Grafana 在 4.0 版本后增加了报警功能，不过 Grafana 的报警属于�
 
 这是因为，在界面上一条曲线能够展示的点的数量是有限的，Grafana 会根据你的窗口宽度来决定返回的点数，因为像一天这样的时间段肯定没办法在界面上展示每一秒的点，毕竟总量为 86400 个点就算带鱼屏也不可能挤得下。对于无法展示的点，Grafana 默认是使用 avg 平均值的行为来修正返回点的值，举个栗子，如下图：
 
-![Grafna](/Media/170601-2-Grafna.svg)
+![Grafna](/Media/170601-2-Grafna.jpg)
 
 上图时间范围是一天，上部分为曲线面板的值，下部分为 面饼图表的值，并且上部分图标的曲线为 count 类型（十秒聚一次），可以看到 avg 平均值为 683，那么总量应该为 682 乘以 6 （如果是 count_ps(每秒的数量) 这里则是 60） 乘以 60 （一小时 60 分钟）再乘以 24 （一天 24 小时）得到 589 万，与图片中下部分的 582 万相近，因此上部分 total 的 117 万是一个完完全全让人误解的值，可以认为它毫无意义进而直接无视掉。
 
