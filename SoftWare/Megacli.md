@@ -108,7 +108,7 @@ Cache 在读数据方面的作用一样不可忽视，因为如果所需要读�
     - `megacli -cfgdsply -aALL |grep Policy`
 
   ```bash
-  [root@ijeff MegaCli]# megacli -cfgdsply -aALL |grep Policy
+  [root@jeff MegaCli]# megacli -cfgdsply -aALL |grep Policy
 
   Default Cache Policy: WriteBack, ReadAhead, Direct, No Write Cache if Bad BBU
   Current Cache Policy: WriteBack, ReadAhead, Direct, No Write Cache if Bad BBU
