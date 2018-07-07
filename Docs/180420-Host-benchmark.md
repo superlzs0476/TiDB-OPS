@@ -135,6 +135,13 @@ fio -ioengine=psync -bs=4k -direct=1 -thread -rw=read -size=10G -filename=PingCA
 fio -ioengine=psync -bs=32k -direct=1 -thread -rw=randread -size=10G -filename=PingCAP-test -name="PingCAP" -iodepth=4 -runtime=60
 ```
 
+
+fio -ioengine=psync -bs=128k -fdatasync=1  -thread -rw=write -size=10G -filename=PingCAP-test -name="PingCAP" -runtime=60
+fio -ioengine=psync -bs=128k -fdatasync=1  -thread -rw=randread -size=10G -filename=PingCAP-test -name="PingCAP" -runtime=60
+
+fio -ioengine=psync -bs=256k -fdatasync=1  -thread -rw=write -size=10G -filename=PingCAP-test -name="PingCAP" -runtime=60
+fio -ioengine=psync -bs=256k -fdatasync=1  -thread -rw=randread -size=10G -filename=PingCAP-test -name="PingCAP" -runtime=60
+
 ### DD
 
 - [dd](https://en.wikipedia.org/wiki/Dd_(Unix))

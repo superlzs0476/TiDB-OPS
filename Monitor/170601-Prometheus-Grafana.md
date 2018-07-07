@@ -13,24 +13,6 @@ tags:
 
 ## TiDB 监控架构介绍
 
-### Prometheus 资料片
-
-- Prometheus 资料
-  - https://prometheus.io/download/
-  - https://prometheus.io/docs/prometheus/latest/querying/operators/
-  - https://prometheus.io/docs/prometheus/latest/querying/functions/
-  - https://github.com/prometheus/prometheus/blob/master/documentation/examples/prometheus.yml
-  - https://prometheus.io/docs/prometheus/latest/querying/api/#tsdb-admin-apis
-
-### Grafana 资料片
-
-- Grafana 官方资料
-  - https://github.com/grafana/grafana
-  - http://docs.grafana.org
-  - https://grafana.com/grafana/download
-    - https://community.grafana.com/c/releases
-  - https://grafana.com/plugins
-
 ### Prometheus 在 TiDB 的应用
 
 ![monitor](/Media/180323-syncer-monitor-scheme.png)
@@ -40,6 +22,14 @@ tags:
 - [Push Gateway](https://github.com/prometheus/pushgateway) push acceptor for ephemeral and batch jobs
 - [Black-box](https://github.com/prometheus/blackbox_exporter) 黑盒测试工具，支持 HTTP, HTTPS, DNS, TCP and ICMP
 - [Node-export](https://github.com/prometheus/node_exporter) 主机资源 agent 组件
+
+- 监控数据走向
+  - Node exporter 收集主机资源负载信息
+  - Blackbox exporter 根据配置文件信息主动探测目标服务状态
+    - 该服务比较特殊，只是在机器启动服务，被探测目标信息需要在 Prometheus 配置文件中配置
+  - TiDB PD TiKV 通过主动将监控数据推送至 Push Gateway
+  - Prometheus 通过配置文件指定 Push Gateway 、 Node exporter 服务地址，Prometheus 主动获取相关信息并存在 TSDB 数据库内
+  - Grafana 添加 Prometheus 数据源，根据 dashboard metric 规则主动向 Prometheus 发起查询请求，然后绘图展示。
 
 ### 监控组件端口
 
@@ -56,6 +46,15 @@ kafka_exporter    | 9105 | kafka 状态监测组件
 -----
 
 ## Prometheus
+
+### Prometheus 资料片
+
+- Prometheus 资料
+  - [Prometheus Dlownload](https://prometheus.io/download/)
+  - [Prometheus 查询运算操作](https://prometheus.io/docs/prometheus/latest/querying/operators/)
+  - [Prometheus 查询函数](https://prometheus.io/docs/prometheus/latest/querying/functions/)
+  - [Prometheus 配置文件模板](https://github.com/prometheus/prometheus/blob/master/documentation/examples/prometheus.yml)
+  - [Prometheus admin API](https://prometheus.io/docs/prometheus/latest/querying/api/#tsdb-admin-apis)
 
 ### Prometheus 介绍
 
@@ -90,9 +89,20 @@ kafka_exporter    | 9105 | kafka 状态监测组件
 
 > [Prometheus 基础概念](https://songjiayang.gitbooks.io/prometheus/content/concepts/data-model.html)
 
+-----
+
 ## Grafana
 
 为 Graphite，InfluxDB 和 Prometheus 等提供漂亮的监控和度量分析和仪表板工具
+
+### Grafana 资料片
+
+- Grafana 官方资料
+  - [Grafana Repo](https://github.com/grafana/grafana)
+  - [Grafana Docs](http://docs.grafana.org)
+  - [Grafana Download](https://grafana.com/grafana/download)
+    - [Grafana ChangeLog](https://community.grafana.com/c/releases)
+  - [Grafana Plugins](https://grafana.com/plugins)
 
 ### 工具介绍
 

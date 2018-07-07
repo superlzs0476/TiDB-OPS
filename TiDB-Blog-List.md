@@ -25,6 +25,7 @@
 ### 组件优化
 
 - [Raft 的优化](https://github.com/pingcap/blog-cn/blob/master/optimizing-raft-in-tikv.md)
+- [multi-raft](https://github.com/pingcap/blog-cn/blob/master/the-design-and-implementation-of-multi-raft.md)
 - [PD Scheduler](https://github.com/pingcap/blog-cn/blob/master/pd-scheduler.md)
 
 -----
@@ -37,6 +38,7 @@
 
 - [TiDB 历史读与 GC](https://github.com/pingcap/docs-cn/blob/master/op-guide/history-read.md)
 - [analyze](https://github.com/pingcap/docs-cn/blob/master/sql/statistics.md)
+- [TiDB 专用特性](https://github.com/pingcap/docs-cn/blob/master/sql/tidb-specific.md)
 
 -----
 

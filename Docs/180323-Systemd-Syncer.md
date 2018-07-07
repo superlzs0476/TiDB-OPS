@@ -13,7 +13,7 @@ tags:
 ## 测试案例
 
 - 背景
-  - Syncer 遇到以下操作会自动退出，目前采用的 Supervise 守护进程，当进程退出后自动拉起服务。但 Supervise 无法控制拉起次数，无法让进程彻底停止
+  - Syncer 遇到以下操作会自动退出，目前采用的 [Supervise](http://supervisord.org) 守护进程，当进程退出后自动拉起服务。但 Supervise 无法控制拉起次数，无法让进程彻底停止
     - 网络闪断 (这个需要被重试拉起)
     - tidb 或者 tikv 繁忙导致 server is busy
     - 不支持的 DDL
@@ -22,6 +22,7 @@ tags:
   - 需要守护进程工具拥有重试最大次数功能
     - 可选方案有 Supervisord 与 Systemd
       - Supervisord 有 Startretries 参数可以实现，但需要部署 Supervisord binary
+        - [引用 liyangliang](http://liyangliang.me/posts/2015/06/using-supervisor/) 
       - Systemd 是 CentOS 系统自带服务，无需单独部署，官方参数暂无 startretries 类似功能。通过 Google 查到其他方式实现相关功能
 
 ### Systemd 配置文件
@@ -33,7 +34,9 @@ tags:
   - RestartSec：自动重启当前服务间隔的秒数
   - StartLimitInterval=, StartLimitBurst=
     - 限制该服务的启动频率。默认值是每10秒内不得超过5次(StartLimitInterval=10s StartLimitBurst=5)
-    - [引用 简书](http://www.jinbuguo.com/systemd/systemd.service.html)
+    - [引用 jinbuguo](http://www.jinbuguo.com/systemd/systemd.service.html)
+    - [man systemd](https://www.freedesktop.org/software/systemd/man/systemd.service.html)
+    - [systemd conf](https://www.freedesktop.org/software/systemd/man/systemd-system.conf.html)
     - [引用 CSDN](http://blog.csdn.net/yuesichiu/article/details/51485147)
     - [引用 阮一峰](http://www.ruanyifeng.com/blog/2016/03/systemd-tutorial-part-two.html)
 

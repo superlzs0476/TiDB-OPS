@@ -65,6 +65,9 @@ tags:
 
 ### Session SQL 语句内存限制参数
 
+- set @@tidb_mem_quota_query=5<<30;
+  - 位移代替乘法
+
 - values 默认属性
   - 单位大小 Bytes
   - 默认 32GB

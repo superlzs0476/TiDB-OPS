@@ -17,6 +17,10 @@ tags:
 
 ## tcpkill
 
+tcpkill 命令属于 Dsniff 嗅探工具包，Dsniff 本身是一个高级的网络嗅探器，Dsniff 可以将制造的数据包注入到网络，一般 Linux 系统中可以找到对应的 dsniff 软件包进行安装。
+
+tcpkill 的工作原理是利用 libpcap 库监控符合过滤条件的 TCP 连接并等待，当该 TCP 连接上有数据传输时就会被 tcpkill 感知到，不过作为应用程序的 tcpkill 当然不能直接关闭 TCP 连接，此时就会构造一条 RST 报文发回去直接导致 TCP 连接异常关闭。
+
 ### install
 
 `yum install -y dsniff`
@@ -28,8 +32,8 @@ tcpkill 与 tcpdump 使用语句格式类似
 `tcpkill [-i interface] [-1...9] expression`
 
   - -i 指定网卡设备
-  - [-1...9] 指定“kill”的强制等级，越高越强，默认为3
-  - expression 匹配需要kill的tcp连接通配表达式，语法与 tcpdump 使用的 pcap-filter 完全一样
+  - [-1...9] 指定 "kill" 的强制等级，越高越强，默认为 3
+  - expression 匹配需要 kill 的 tcp 连接通配表达式，语法与 tcpdump 过滤表达式参数一致，具体如何使用可以参考 tcpdump 的[帮助信息](http://www.tcpdump.org/tcpdump_man.html)
 
 ### Case-by-case
 
