@@ -3,7 +3,7 @@ title: TiDB Binlog 部署以及问题处理
 date: 2017-10-02 11:40:52
 updated: 2017-10-03 21:40:52
 categories:
-  - TiDB
+  - Troubleshooting
 tags:
   - PUMP
   - Drainer

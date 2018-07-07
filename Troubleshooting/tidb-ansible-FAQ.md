@@ -3,7 +3,7 @@ title: TiDB-ansible 问题收集处理
 date: 2017-10-07 11:40:52
 updated: 2017-10-08 21:40:52
 categories:
-  - TiDB
+  - Troubleshooting
 tags:
   - ansible
   - inventory
