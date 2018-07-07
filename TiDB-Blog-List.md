@@ -21,6 +21,11 @@
 - [TiDB SQL Parser 的实现](https://github.com/pingcap/blog-cn/blob/master/tidb-source-code-reading-5.md)
 - [Select 语句概览](https://github.com/pingcap/blog-cn/blob/master/tidb-source-code-reading-6.md)
 - [基于规则的优化](https://github.com/pingcap/blog-cn/blob/master/tidb-source-code-reading-7.md)
+- [基于代价的优化](https://github.com/pingcap/blog-cn/blob/master/tidb-source-code-reading-8.md)
+- [Hash Join](https://github.com/pingcap/blog-cn/blob/master/tidb-source-code-reading-9.md "TiDB Hash Join 的实现以及几种常见的问题")
+- [Chunk 和执行框架简介](https://github.com/pingcap/blog-cn/blob/master/tidb-source-code-reading-10.md)
+- [Index Lookup Join](https://github.com/pingcap/blog-cn/blob/master/tidb-source-code-reading-11.md)
+- [统计信息](https://github.com/pingcap/blog-cn/blob/master/tidb-source-code-reading-12.md)
 
 ### 组件优化
 
