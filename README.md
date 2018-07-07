@@ -43,6 +43,10 @@
 - [TiKV 磁盘空间回收步骤记录](Case-by-case/180503-Disk-Space-recovery.md)
 - [kill tcp connect](Case-by-case/180505-tcpkill.md)
 
+### Troubleshooting
+
+- [TiDB Binlog 部署以及问题处理](Troubleshooting/TiDB-Binlog.md)
+
 ### Software
 
 - [Tmux 快捷键 & 速查表](SoftWare/tmux.md)

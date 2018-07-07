@@ -146,6 +146,9 @@ tags:
 
 它提供了一个非常友好的 WebUI 界面，操作相关指令。它可以用于做数据分析和可视化。其后面可以接入不同的数据处理引擎。包括 Flink，Spark，Hive 等。支持原生的 Scala，Shell，Markdown 等。
 
+> 官方提供更多安装方式，详情查看[Using the official docker image
+](https://zeppelin.apache.org/download.html)
+
 1. 使用清华开源镜像站下载 Zeppelin
 
   ```BASH
