@@ -16,19 +16,19 @@ tags:
 
 ## 部署 TiSpark 集群
 
-### TiDB-Ansible 与 TiSpark
+### TiDB-Ansible 与 TiSpark 的关系
 
 - `tidb-ansible/roles/local/templates/binary_packages.yml.j2` 下载连接
   - 此处为 tispark 下载连接，jar 包下载 [传送门](http://download.pingcap.org/tispark-SNAPSHOT-jar-with-dependencies.jar)
 - `tidb-ansible/conf/spark-defaults.yml`
   - tispark 配置文件信息，文件配置示例 [Github](https://github.com/pingcap/tidb-ansible/blob/master/conf/spark-defaults.yml) 格式为 `key: value`
 - `tidb-ansible/roles/tispark/tasks/main.yml`
-  - tispark 安装步骤
+  - 此处为 tispark 安装步骤
 
 ### 部署 TiSpark 准备
 
 - 确定目标节点已经安装 java 1.8 以上版本
-  - 在目标节点执行`java -version` 查看
+  - 在目标节点执行 `java -version` 查看
 - 修改 inventory.ini 文件
   - spark_master 与 spark_slaves 为空时，默认安装在第一台 tidb `{{deploy}}/spark` 目录下，该安装模式为 standalone
   - 以下为 spark 安装示例，非 standalone 模式
@@ -43,7 +43,7 @@ tags:
   ```
 
 - TiSpark 配置文件参数说明，按实际需求进行修改 `tidb-ansible/conf/spark-defaults.yml`
-  - 已经安装 Spark ，修改 `{{deploy}}/spark/conf/spark-defaults.conf`
+  - 已经安装 Spark ，修改 `{{deploy}}/spark/conf/spark-defaults.conf` （可使用默认配置）
 
   ```conf
   spark.tispark.table.scan_split_factor 2
@@ -79,12 +79,18 @@ tags:
   SPARK_WORKER_MEMORY=5g
   ```
 
-### 安装 / 运维 TiSpark
+### 开始安装 TiSpark
 
-- 执行 `ansible-playbook -i inventory.ini deploy.yml` 安装所有 TiDB 组件
-- 以下为单独安装 spark 组件
+> TiDB 目前默认已安装一台 spark 节点。以下为安装 spark cluster 。需要编写 inventory.ini，在 master_spark & slaves_sparks 填写目标主机信息
+
+- 初始化 master_spark & slaves_sparks 目标主机信息
+  - 执行 `ansible-playbook -i inventory.ini bootstrap.yml -l master_spark,slaves_spark` 
+- 单独安装 spark 组件
   - 执行 `ansible-playbook -i inventory.ini deploy.yml -l master_spark,slaves_spark`
-- 启动/停止
+
+### 运维 TiSpark
+
+- 启动 / 停止
   - 执行 `ansible-playbook -i inventory.ini start_spark.yml` 启动集群
   - 执行 `ansible-playbook -i inventory.ini stop_spark.yml` 启动集群
 
@@ -112,7 +118,7 @@ tags:
   ```
 
 2. 通过 TiSpark-SQL 运行
-  - 下载 TiSpark-SQL [传送门](https://github.com/pingcap/tispark/tree/master/scripts)
+  - 下载 TiSpark-SQL [传送门](https://github.com/pingcap/tispark/blob/master/core/scripts/tispark-sql)
   - 将文件保存导 `{{deploy}}/spark/bin` 下，赋予执行权限
 - 登陆 172.16.10.64 机器
 - 进入目录 `cd /data3/deploy/spark/bin`
@@ -132,18 +138,24 @@ tags:
 
 ---
 
-## 安装 zeppelin
+## 使用 zeppelin 远程链接 Spark
 
-1. 下载 Zeppelin
+### 安装 zeppelin
+
+[Zeppelin](https://github.com/apache/zeppelin) 目前已托管于 Apache 基金会，但并未列为顶级项目，可以在其公布的官网访问。
+
+它提供了一个非常友好的 WebUI 界面，操作相关指令。它可以用于做数据分析和可视化。其后面可以接入不同的数据处理引擎。包括 Flink，Spark，Hive 等。支持原生的 Scala，Shell，Markdown 等。
+
+1. 使用清华开源镜像站下载 Zeppelin
 
   ```BASH
-  wget http://mirrors.tuna.tsinghua.edu.cn/apache/zeppelin/zeppelin-0.7.3/zeppelin-0.7.3-bin-netinst.tgz
+  https://mirrors.tuna.tsinghua.edu.cn/apache/zeppelin/
   ```
 
-2. 配置 conf/zeppelin-env.sh 将 SPARK_HOME 指向当前机器上的 SPARK 地址 例如
+2. 配置 conf/zeppelin-env.sh 将 SPARK_HOME 指向当前机器上的 SPARK 地址，例如
 
   ```BASH
-  export SPARK_HOME=/Users/ilovesoup1/workspace/pingcap/spark-2.1.1-bin-hadoop2.7
+  export SPARK_HOME=/Users/ilovesoup1/workspace/spark-2.1.1-bin-hadoop2.7
   ```
 
 3. 检查 jackson 相关 JAR 包
@@ -188,7 +200,7 @@ tags:
 ## FAQ
 
 - 第一次测试 spark-shell 时，如遇见以下问题，请检查 `{{deploy_dir}}/spark/conf/spark-defaults.yml` 文件中是否有正确使用 `spark.tispark.pd.addresses:` 参数。
-  - `java.util.NoSuchElementException: spark.tispark.pd.addresses` 
+  - `java.util.NoSuchElementException: spark.tispark.pd.addresses`
 
   ```BASH
   scala> import org.apache.spark.sql.TiContext
@@ -206,3 +218,13 @@ tags:
 
   scala>
   ```
+
+### index 下推
+
+- 查看是否开启 index 下推
+
+`spark.conf.get("spark.tispark.plan.allow_index_read")`
+
+- 如果是 false，通过以下语句修改
+
+`spark.conf.set("spark.tispark.plan.allow_index_read", "true")`
