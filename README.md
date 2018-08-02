@@ -55,6 +55,7 @@
 - [NextCloud 安装运维调测](SoftWare/nextcloud.md)
 - [RAID 与 Megacli](SoftWare/Megacli.md)
 - [HAproxy 负责均衡](SoftWare/HAproxy.md)
+- [transfer.sh](SoftWare/Transfer.sh.md)
 
 ### API
 
