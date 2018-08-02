@@ -44,17 +44,18 @@
 - [TiDB 历史读与 GC](https://github.com/pingcap/docs-cn/blob/master/op-guide/history-read.md)
 - [analyze](https://github.com/pingcap/docs-cn/blob/master/sql/statistics.md)
 - [TiDB 专用特性](https://github.com/pingcap/docs-cn/blob/master/sql/tidb-specific.md)
+- [TiDB 内存控制文档](https://github.com/pingcap/docs-cn/blob/master/sql/tidb-memory-control.md)
 
 -----
 
 ## 官方链接
 
 - 微信公众号：pingcap2015
-- 官网
-- V2EX
-- GitHub
-- Sina WeiBo
-- 知乎专栏
-- 知乎同事
-- reddit.com
+- 官网：http://pingcap.com
+- V2EX：https://www.v2ex.com/member/PingCAP
+- GitHub：https://github.com/pingcap/
+- Sina WeiBo：https://www.weibo.com/pingcap
+- 知乎专栏：https://zhuanlan.zhihu.com/newsql
+- 知乎同事：[shenli](https://www.zhihu.com/people/shenli/activities)、[Ed Huang](https://www.zhihu.com/people/huang-dong-xu/activities)
+- reddit.com：https://www.reddit.com/r/TiDB/
 - stackoverflow.com
