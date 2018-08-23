@@ -41,10 +41,15 @@
 
 ### TiDB
 
-- [TiDB 历史读与 GC](https://github.com/pingcap/docs-cn/blob/master/op-guide/history-read.md)
+- [TiDB 历史读](https://github.com/pingcap/docs-cn/blob/master/op-guide/history-read.md)
+- [GC](https://github.com/pingcap/docs-cn/blob/master/op-guide/gc.md)
 - [analyze](https://github.com/pingcap/docs-cn/blob/master/sql/statistics.md)
 - [TiDB 专用特性](https://github.com/pingcap/docs-cn/blob/master/sql/tidb-specific.md)
 - [TiDB 内存控制文档](https://github.com/pingcap/docs-cn/blob/master/sql/tidb-memory-control.md)
+
+### Blog
+
+- [Transaction in TiDB](https://andremouche.github.io/tidb/transaction_in_tidb.html)
 
 -----
 

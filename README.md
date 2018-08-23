@@ -46,6 +46,7 @@
 
 - [TiDB Binlog 部署以及问题处理](Troubleshooting/TiDB-Binlog.md)
 - [TiDB-ansible 问题收集处理](Troubleshooting/tidb-ansible-FAQ.md)
+- [Syncer 问题收集处理](Troubleshooting/Syncer-FAQ.md)
 
 ### Software
 
