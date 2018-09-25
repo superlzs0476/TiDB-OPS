@@ -1,4 +1,21 @@
-# TiDB-ops
+---
+layout: page
+title: TiDB OPS WikiHow
+date: 2015-10-01 21:40:52
+updated: 2015-10-10 21:40:52
+description: "TiDB 非官方小知识库，TiDB 运维手册，TiDB 小金库，TiDB 融资，TiDB OPS WikiHow,TiDB Clouds"
+tags:
+  - TiDB
+  - TiDB-OPS
+  - TiDB-Operator
+  - 2pc
+  - raft
+  - database
+  - HTAP
+  - Newsql
+  - TiDB Cloud
+---
+# TiDB 非官方小知识库
 
 > That too late when it is the first time [.](https://www.google.com/ "Google")
 
