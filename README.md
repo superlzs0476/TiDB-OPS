@@ -1,4 +1,4 @@
-# TiDB-ops
+# 知之谓之 -- TiDB OPS
 
 > That too late when it is the first time [.](https://www.google.com/ "Google")
 
@@ -46,7 +46,7 @@
 
 - [TiDB Binlog 部署以及问题处理](Troubleshooting/TiDB-Binlog.md)
 - [TiDB-ansible 问题收集处理](Troubleshooting/tidb-ansible-FAQ.md)
-- [Syncer 问题收集处理](Troubleshooting/Syncer-FAQ.md)
+- [Syncer 问题收集处理](Troubleshooting/Syncer-FAQ.md) -- ★
 
 ### Software
 

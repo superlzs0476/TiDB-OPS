@@ -11,15 +11,45 @@ tags:
 ---
 # Syncer-FAQ
 
+- 使用 Syncer 前请详细阅读官方 [Syncer](https://github.com/pingcap/docs-cn/blob/master/tools/syncer.md) 文档
+- Syncer 是一个 **同步工具** ，通过 Syncer 配置文件中的 [from] 获取上游 MySQL binlog 信息，解析 binlog 后会根据配置文件中的 skip-dmls、skip-ddls、replicate-do-db、replicate-do-table、route-rules 等参数匹配 or 过滤，然后将匹配 or 过滤后的数据集通过 SQL Client 的方式写入到 [to] 下游数据库
+
 ## Syncer 业务逻辑
 
-- 留白
+![Syncer 业务逻辑，by: https://github.com/BigerCAP](../Media/20180101-Syner-faq.svg)
 
-## 受限问题
+### Syncer 性能调优
+
+- Syncer 是个同步工具，Syncer 中分三个部分
+  - 上游 binlog 数据读取：这是个单线程模拟 MySQL 读取 binlog 内容，一般不存在性能瓶颈 (远程网络读取 binlog 会受带宽质量影响)
+  - 中游数据处理：数据过滤、数据匹配、数据转换、数据检查，此处会消耗计算资源与内存资源
+  - 下游数据消费：Syncer 作为 SQL Client 链接 TiDB 消费数据，由配置文件中 worker-count * batch 控制 Syncer 消费数据的速度；在数据消费时 binlog 的语句会被以下方式进行替换：
+    - insert 替换为 replace
+    - update 替换为 update / update 替换为 delete + replace (safemode)
+    - delete == delete
+- 根据下游消费能力，调整 worker-count 与 batch 参数，worker-count 提供了并发能力，batch 是每个并发的数据量
+  - worker-count 工作能力受 syncer 所在机器的 CPU 影响， worker-count 与 CPU 至少是 1:1 关系
+  - 首先提高 worker-count(1-256 之间) ，batch 固定 (比如 100 )，当调大 worker-count 无法加快消费时，可以适当增加 batch 大小，不建议超过 1000
+    - 调整 worker-count * batch 时应当注意 [Syncer dashboard](https://github.com/pingcap/docs-cn/blob/master/tools/syncer.md#%E7%9B%91%E6%8E%A7%E6%96%B9%E6%A1%88 "看这里可以知道如何配置 Syncer 监控") 中的 syncer_txn_costs_gauge_in_second Panel，该数值不可以大于 1 ，该项为 Syncer 执行语句到下游消费成功的时长
+  - worker count * batch 等于最大消费 QPS ，实际运行过程会低于这个假设值，尤其当内外网之间进行同步时，此时应当注意内外网之间的最大带宽。
+
+## 问题整理
+
+- Syncer 在使用过程中会遇见以下错误：
+  1. Syncer 解析 binlog 出错：Syncer 目前支持的 binlog 有限，初始时按照 MySQL 5.7\5.6 版本开发，后期加入了 MariaDB 10 ；如果使用版本不在这个范围之内可能会出现一些异常错误。同时 MySQL 与 MariaDB 自身软件也会产生一些 binglog 相关的 BUG，这类 BUG 需要升级软件版本才可以解决
+  2. Syncer 插入数据到下游出错：此类一般是下游 TiDB 不支持。此类报错与 SQL Client 执行 SQL 语句得到的报错一致
+  3. Syncer 因为某些事件产生 panic (如使用了比较老版本的 MySQL)：此时需要联系 PingCAP 官方技术支持，发送业务场景、使用疑问信息到 info@pingcap.com
+  4. Syncer 使用过程中其他错误：如数据库权限问题、网络闪断或不可达、下游消费出现堵塞、写入冲突、数据同步慢、数据同步不正常 等，其实均可通过自建与阅读文档解决
+- Syncer 出现问题时应当先进行自检，完成以下步骤内容
+  - Sycner [同步前的一些检查项](https://github.com/pingcap/docs-cn/blob/master/tools/syncer.md#syncer-%E5%90%8C%E6%AD%A5%E5%89%8D%E6%A3%80%E6%9F%A5) ：检查上下游之间的参数是否符合需求
+  - Syncer [监控项 / 告警项配置](https://github.com/pingcap/docs-cn/blob/master/tools/syncer.md#%E7%9B%91%E6%8E%A7%E6%96%B9%E6%A1%88) ：设置这个可以观察 Syncer 运行状态
+  - Syncer 数据同步不正常，应当先检查 [配置文件](https://github.com/pingcap/docs-cn/blob/master/tools/syncer.md#%E5%90%AF%E5%8A%A8-syncer) 与 [route-rule](https://github.com/pingcap/docs-cn/blob/master/tools/syncer.md#%E6%8C%87%E5%AE%9A%E6%95%B0%E6%8D%AE%E5%BA%93%E5%90%8C%E6%AD%A5)，检查这些是否与期望相等
+  - Syncer [启动方式与守护进程](../Docs/180323-Systemd-Syncer.md)
 
 ### Case 1 ：上下游 schema 不一致场景
 
-- 该问题主要出现于分库分表，上游执行 DDL 后，Syncer 出现上下游 schema 信息不一致。原因是上游分表同步进步不一致，没有有效的通过中控机制锁住所有分表的 DDL 执行状态。
+- 该问题主要出现于分库分表，上游执行 DDL 后，Syncer 出现上下游 schema 信息不一致。
+- 原因是上游分表同步进步不一致，没有有效的通过中控机制锁住所有分表的 DDL 执行状态。
 - 日志输出如下：
 
 ```log
@@ -29,15 +59,27 @@ tags:
 ```
 
 - 核验步骤
-  - 通过 `show create table tablename` 核实上下游列宽
-  - 还可以通过 mysqlbinlog 查看 binlog 内容，或者 syncer 开启 Debug 模式查看输出
-    - mysqlbinlog 示例如下
+  - 通过 `show create table tablename` 核实上下游 schema info ，或者通过 mysqlbinlog 查看 binlog 内容，或者 syncer 开启 Debug 模式查看输出
+    - mysqlbinlog 示例如下 (注意修改 binlogname 与 pos 点位置，可以使用 log 或者 syncer.meta 中的信息)
       - `mysqlbinlog --base64-output=DECODE-ROWS  mysql-bin.002019 --start-position 430862799 --stop-position 430866627 -vv`
 
 - 解决方案
-  - 如果数据量小，可以从新来一遍全量，然后再坐增量
-  - 第二种，联系 PingCAP 官方服务，官方会提供一个特殊版本 syncer，去掉检查上下游 schema 功能，此时可以继续同步数据。
-    - 去掉检查上下游 schema 后，如果是先做 `alter table A add column`，然后 `alter table A delete column`，此时数据会有影响。
+  - 如果数据量小，可以从新来一遍全量，然后再做增量数据
+  - 联系 PingCAP 官方服务，官方会解决详细解决方案。
+    - 比如：去掉上下游 schema 检查，这种会有一定的潜在问题，如先执行 `alter table A add column`，紧随执行 `alter table A delete column`，此时数据会有影响。
+    - 或者使用 Syncer 升级版 Data Migration Product Proposal (DM)，需要联系 PingCAP 商务支持 info@pingcap.com
+
+### Case 6 ：Syncer 插入数据到下游问题汇总
+
+#### Error 1105: unsupported modify column null to not null
+
+- Syncer 日志文件
+
+    ```SQL
+    2018/09/28 18:40:54 db.go:123: [warning] [exec][sql]USE `qxf`; ALTER TABLE `fof_strategy` MODIFY COLUMN `start_date` datetime NOT NULL;[args][][error]Error 1105: unsupported modify column null to not null
+    ```
+- 问题原因
+  - 这个错误是 TiDB 不支持  default null 与 default not null 之间的互相转换。详情阅读 [官方文档 DDL 之 Alter table](https://github.com/pingcap/docs-cn/blob/master/sql/ddl.md#alter-table-%E8%AF%AD%E6%B3%95)
 
 ### Case 4 ：启动 Syner 失败，发现 Meta 文件中存在回车符，
 
@@ -54,7 +96,7 @@ tags:
 
 ### Case 5 ：数据同步不正常或数据上下游不一致问题检查
 
-- 自检 checklist [TODO]
+- 自检 [checklist](https://github.com/pingcap/docs-cn/blob/master/tools/syncer.md#syncer-%E5%90%8C%E6%AD%A5%E5%89%8D%E6%A3%80%E6%9F%A5)
 
 - Syncer 正常运行，主库有插入数据，备库不同步
   - 检查 binlog 是否存在
@@ -93,7 +135,7 @@ tags:
 
 ------
 
-## 已 fix
+## 已 fixbug
 
 ### Case 2 ：GTID 开关问题
 
@@ -127,19 +169,19 @@ tags:
 
   - 修复办法：杀掉 syncer 进程，然后登陆 MySQL 杀死所有长连接。
 
-## 常规疑问/问题示例
+## 问题示例
 
 ### 通过开启 Syncer Debug 日志，查看 Syncer 运行内容
 
 ```LOG
-2018/01/13 12:04:12 binlogsyncer.go:98: [info] create BinlogSyncer with config &{100 mysql rm-bp173ev089q70rp03.mysql.rds.aliyuncs.com 3306 g7pay_link_ro nxrwcQ47kdIn   false false <nil> false debug 0}
+2018/01/13 12:04:12 binlogsyncer.go:98: [info] create BinlogSyncer with config &{100 mysql rm-bp173ev012345rp03.mysql.rds.tidbclouds.com 3306 g7pay_link_ro nxrwcQ47kdIn   false false <nil> false debug 0}
 2018/01/13 12:04:12 metrics.go:107: [info] listening on :10073 for status and metrics report.
 2018/01/13 12:04:12 binlogsyncer.go:274: [info] begin to sync binlog from position (mysql-bin.002019, 430862751)
-2018/01/13 12:04:12 binlogsyncer.go:158: [info] register slave for master server rm-bp173ev089q70rp03.mysql.rds.aliyuncs.com:3306
+2018/01/13 12:04:12 binlogsyncer.go:158: [info] register slave for master server rm-bp173ev012345rp03.mysql.rds.tidbclouds.com:3306
 2018/01/13 12:04:12 binlogsyncer.go:632: [info] rotate to (mysql-bin.002019, 430862751)
 2018/01/13 12:04:12 syncer.go:521: [info] rotate binlog to (mysql-bin.002019, 430862751)
 2018/01/13 12:04:12 syncer.go:676: [debug] gtid information: binlog (mysql-bin.002019, 430862799), gtid b470bfb4-bdb4-11e6-a7e5-70106fac1460:1-277917818
-2018/01/13 12:04:12 syncer.go:525: [debug] source-db:cat_link table:link_cat; target-db:cat_link table:link_cat, RowsEvent data: [[E78D56BBBC2357PPP9687CACD6EBD2AC 区域经营 - 华南 118OO6009 华中 - 桂琼 - 柳州门店 118006009025OO1 200O6Q 200O6Q 广西TiDB储物流股份有份公司 陈王 120123ABCD149082 桂 A88888 0 2 梁王 18277238888 <nil> 0000-00-00 00:00:00 0 0 0000-00-00 00:00:00 小芳 lij 0 1 2018-01-12 21:10:09 <nil> 2  291464]]
+2018/01/13 12:04:12 syncer.go:525: [debug] source-db:cat_link table:link_cat; target-db:cat_link table:link_cat, RowsEvent data: [[E78D56BBBC2357PPPBBBBCACD6EBD2AC 区域经营 - 华南 118OO6009 华中 - 桂琼 - 柳州门店 118006GHJ025OO1 H00O6Q H00O6Q 浙广 TiDB 储物流动公司 陈王 120123ABCD149rrr2 桂 A88888 0 2 梁王 18212238888 <nil> 0000-00-00 00:00:00 0 0 0000-00-00 00:00:00 小芳 lij 0 1 2018-01-12 21:10:09 <nil> 2  291464]]
 2018/01/13 12:04:12 db.go:55: [debug] [query][sql]SHOW COLUMNS FROM `cat_link`.`link_cat`
 2018/01/13 12:04:12 db.go:55: [debug] [query][sql]SHOW INDEX FROM `cat_link`.`link_cat`
 2018/01/13 12:04:12 syncer.go:882: [info] flush all jobs meta = syncer-binlog = (mysql-bin.002019, 430862751), syncer-binlog-gtid = b470bfb4-bdb4-11e6-a7e5-70106fac1460:1-277917817
