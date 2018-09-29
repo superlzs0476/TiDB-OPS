@@ -16,7 +16,7 @@ tags:
 
 ## Syncer 业务逻辑
 
-![Syncer 业务逻辑，by: https://github.com/BigerCAP](../Media/20180101-Syner-faq.svg)
+![Syncer 业务逻辑，by: https://github.com/BigerCAP](../Media/20180101-Syner-faq.png)
 
 ### Syncer 性能调优
 
