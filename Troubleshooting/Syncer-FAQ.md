@@ -16,7 +16,7 @@ tags:
 
 ## Syncer 业务逻辑
 
-![Syncer 业务逻辑，by: https://github.com/BigerCAP](../Media/180101-Syner-faq.png)
+![Syncer 业务逻辑，by: https://github.com/BigerCAP](../Media/180101-Syner-faq.svg)
 
 ### Syncer 性能调优
 
@@ -24,8 +24,8 @@ tags:
   - 上游 binlog 数据读取：这是个单线程模拟 MySQL 读取 binlog 内容，一般不存在性能瓶颈 (远程网络读取 binlog 会受带宽质量影响)
   - 中游数据处理：数据过滤、数据匹配、数据转换、数据检查，此处会消耗计算资源与内存资源
   - 下游数据消费：Syncer 作为 SQL Client 链接 TiDB 消费数据，由配置文件中 worker-count * batch 控制 Syncer 消费数据的速度；在数据消费时 binlog 的语句会被以下方式进行替换：
-    - insert 替换为 replace
-    - update 替换为 update / update 替换为 delete + replace (safemode)
+    - insert == replace
+    - update == update / update == delete + replace (safemode)
     - delete == delete
 - 根据下游消费能力，调整 worker-count 与 batch 参数，worker-count 提供了并发能力，batch 是每个并发的数据量
   - worker-count 工作能力受 syncer 所在机器的 CPU 影响， worker-count 与 CPU 至少是 1:1 关系
