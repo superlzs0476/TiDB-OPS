@@ -18,20 +18,29 @@ tags:
 
 ![Syncer 业务逻辑，by: https://github.com/BigerCAP](../Media/180101-Syner-faq.svg)
 
-### Syncer 性能调优
-
 - Syncer 是个同步工具，Syncer 中分三个部分
-  - 上游 binlog 数据读取：这是个单线程模拟 MySQL 读取 binlog 内容，一般不存在性能瓶颈 (远程网络读取 binlog 会受带宽质量影响)
-  - 中游数据处理：数据过滤、数据匹配、数据转换、数据检查，此处会消耗计算资源与内存资源
-  - 下游数据消费：Syncer 作为 SQL Client 链接 TiDB 消费数据，由配置文件中 worker-count * batch 控制 Syncer 消费数据的速度；在数据消费时 binlog 的语句会被以下方式进行替换：
-    - insert == replace
-    - update == update / update == delete + replace (safemode)
-    - delete == delete
-- 根据下游消费能力，调整 worker-count 与 batch 参数，worker-count 提供了并发能力，batch 是每个并发的数据量
+  - **上游** binlog 数据读取：这是个单线程模拟读取 MySQL binlog 内容，Syncer 针对 from binlog 有一定的 [约束检查](https://github.com/pingcap/docs-cn/blob/master/tools/syncer.md#syncer-%E5%90%8C%E6%AD%A5%E5%89%8D%E6%A3%80%E6%9F%A5)，检查通过后开始拉取数据并进行数据预处理工作
+    - 目前 Syncer 拉取 binlog 不存在性能瓶颈 (远程网络读取 binlog 会受带宽质量影响)
+    - 数据预处理工作是主动去掉 TiDB 目前不支持的 SQL format 、DML SQL format 转换、DDL Spilt 等内容
+  - **中层** 数据处理：将上游预处理的数据与配置文件中的 `skip-dmls、skip-ddls、replicate-do-db、replicate-do-table、route-rule` 参数做数据过滤、数据匹配、数据转换、数据检查
+    - 此处会消耗 Syncer 所在主机的计算资源、内存资源
+  - **下游** 数据消费：Syncer 作为 SQL Client 链接 TiDB 消费数据，由配置文件中 worker-count * batch 控制 Syncer 消费数据的速度
+    - 在数据消费时 binlog 的语句会被以下方式进行替换：
+      - insert == replace
+      - update == update / update == delete + replace (safemode)
+      - delete == delete
+    - 数据消费过程中会记录下数据同步断点：Syncer 断点记录在 Syncer.meta 文件中， 格式是 binlog-name、Position 与 GTID
+      - Syncer 会将上游一个大事务进行切分为多个小事务到下游执行，如在一个大事务内发生退出，Syncer 再次启动时会重新执行这个事务
+      - Syncer 是以 ROW format binlog 进行回放 SQL 语句，即使事务被重复执行也会保持一致性
+    - 此处会消耗 Syncer 所在主机的网络资源
+
+## Syncer 性能调优
+
+- Syncer 根据下游消费能力调整 worker-count 与 batch 参数控制其同步速度，worker-count 提供了并发能力，batch 是每个并发的数据量
   - worker-count 工作能力受 syncer 所在机器的 CPU 影响， worker-count 与 CPU 至少是 1:1 关系
   - 首先提高 worker-count(1-256 之间) ，batch 固定 (比如 100 )，当调大 worker-count 无法加快消费时，可以适当增加 batch 大小，不建议超过 1000
-    - 调整 worker-count * batch 时应当注意 [Syncer dashboard](https://github.com/pingcap/docs-cn/blob/master/tools/syncer.md#%E7%9B%91%E6%8E%A7%E6%96%B9%E6%A1%88 "看这里可以知道如何配置 Syncer 监控") 中的 syncer_txn_costs_gauge_in_second Panel，该数值不可以大于 1 ，该项为 Syncer 执行语句到下游消费成功的时长
-  - worker count * batch 等于最大消费 QPS ，实际运行过程会低于这个假设值，尤其当内外网之间进行同步时，此时应当注意内外网之间的最大带宽。
+    - 调整 worker-count * batch 时应当注意 [Syncer dashboard](https://github.com/pingcap/docs-cn/blob/master/tools/syncer.md#%E7%9B%91%E6%8E%A7%E6%96%B9%E6%A1%88 "看这里可以知道如何配置 Syncer 监控") 中的 `syncer_txn_costs_gauge_in_second` Panel，该项为 Syncer 执行语句到下游消费成功的时长 (正常该数值在 ms 级)
+  - worker count * batch 等于最大消费 QPS ，实际运行过程会低于这个假设值，尤其当内外网之间进行同步时，此时应当注意内外网之间的最大带宽
 
 ## 问题整理
 
