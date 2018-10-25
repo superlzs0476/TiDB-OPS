@@ -47,7 +47,7 @@ tags:
   - 邮件单独告警，而非一封邮件
   - alertmanager 组件如果挂掉，那么就没办法发告警了，前面所有链路中断
 
-```YML
+```yaml
 global:
   # Slack API 信息
   slack_api_url: 'https://hooks.slack.com/services/T04AQPYPM/B2EJ1BSBG/12313424342342344'
@@ -92,19 +92,19 @@ receivers:                        # 接收器根
 - name: 'alert-default'           # 接收器唯一名字，如有重复，告警停用。与 `route` 关联使用。
   slack_configs:
   - channel: '#alerts-for-test'   # 指定发送至 slack channel
-  username: 'office-alert'        # 指定发送者 username
-  icon_emoji: ':pingcap:'         # 指定发送者头像, 可在 slack 表情包获取 emoji 信息
-  title:   '{{.CommonLabels.alertname}}'
-  text:    'in {{.CommonLabels.env}}:   {{ .GroupLabels.alertname }}  {{ .CommonAnnotations.description }}    http://office.tidb.cc/alerts'
+    username: 'office-alert'        # 指定发送者 username
+    icon_emoji: ':pingcap:'         # 指定发送者头像, 可在 slack 表情包获取 emoji 信息
+    title:   '{{.CommonLabels.alertname}}'
+    text:    'in {{.CommonLabels.env}}:   {{ .GroupLabels.alertname }}  {{ .CommonAnnotations.description }}    http://office.tidb.cc/alerts'
 
 - name: 'alert-slack-user'                  # 接收器唯一名字，如有重复，告警停用。与 `route` 关联使用。
   slack_configs:
   - api_url: 'https://hooks.slack.com/services/T04AQPYPM/B2EJ1BSBG/zczczczczcdsadafsvdvsf'
-  channel: '@user'                          # 指定发送至 slack 用户
-  username: '{{.CommonLabels.env}}-alert'   # 指定发送者 username (昵称) , 此处格式为 ` 集群名称 - alert`
-  icon_emoji: ':{{.CommonLabels.env}}:'     # 指定发送者头像, 此处格式为 `: 集群名称:`, 提前在 slack 定义该图片
-  title:   '{{.CommonLabels.alertname}}'
-  text:    'in {{.CommonLabels.env}}:   {{ .GroupLabels.alertname }}  {{ .CommonAnnotations.description }}    http://office.tidb.cc/alerts'
+    channel: '@user'                          # 指定发送至 slack 用户
+    username: '{{.CommonLabels.env}}-alert'   # 指定发送者 username (昵称) , 此处格式为 ` 集群名称 - alert`
+    icon_emoji: ':{{.CommonLabels.env}}:'     # 指定发送者头像, 此处格式为 `: 集群名称:`, 提前在 slack 定义该图片
+    title:   '{{.CommonLabels.alertname}}'
+    text:    'in {{.CommonLabels.env}}:   {{ .GroupLabels.alertname }}  {{ .CommonAnnotations.description }}    http://office.tidb.cc/alerts'
 
 # Email template
 
